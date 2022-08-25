@@ -2,9 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 *.csv
-/data
-/Dataset
-/checkpoint
+data/
+Dataset/
+checkpoint/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
