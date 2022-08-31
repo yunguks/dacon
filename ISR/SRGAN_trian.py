@@ -9,6 +9,9 @@ from tqdm.auto import tqdm
 import PIL
 import gc
 import zipfile
+from models import SRGAN
+import pytorch_ssim
+import math
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, img_list, transform=None, train_mode=True):
@@ -39,35 +42,6 @@ class CustomDataset(torch.utils.data.Dataset):
     
     def __len__(self):
         return len(self.low_list)
-
-class SRCNN(torch.nn.Module):
-    def __init__(self, channels=3, feature_dim = 64, map_dim=32):
-        super(SRCNN, self).__init__()
-        self.features =torch.nn.Sequential(
-            torch.nn.Conv2d(channels, feature_dim,kernel_size=9,stride=1,padding=4,bias=True),
-            torch.nn.ReLU(True)
-        )
-
-        self.map = torch.nn.Sequential(
-            torch.nn.Conv2d(feature_dim,map_dim,5,1,2,bias=True),
-            torch.nn.ReLU(True)
-        )
-        self.reconstruction = torch.nn.Conv2d(map_dim,channels,5,1,2)
-        self._initial_weights()
-
-    def forward(self,x):
-        features = self.features(x)
-        maps = self.map(features)
-        out = self.reconstruction(maps)
-        return out
-    def _initial_weights(self):
-        for m in self.modules():
-            if isinstance(m, torch.nn.Conv2d):
-                torch.nn.init.kaiming_normal_(m.weight)
-                torch.nn.init.zeros_(m.bias.data)
-            elif isinstance(m, (torch.nn.BatchNorm2d, torch.nn.GroupNorm)):
-                torch.nn.init.constant_(m.weight, 1)
-                torch.nn.init.constant_(m.bias, 0)
 
 def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler=None, device='cpu'):
     model.to(device)
@@ -160,6 +134,7 @@ if __name__ =='__main__':
 
     BATCH_SIZE =4
     IMG_SIZE=2048
+    EPOCH=200
 
     train_transform = torchvision.transforms.Compose([
         torchvision.transforms.Resize([IMG_SIZE,IMG_SIZE]),
@@ -191,17 +166,88 @@ if __name__ =='__main__':
     test_dataset = CustomDataset(test_list,test_transform,train_mode=False)
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
-    model = SRCNN()
-    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.005,momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma=0.3)
-    criterion = torch.nn.MSELoss()
+    netG = SRGAN.Generator
+    netD = SRGAN.Discriminator
 
-    history = train(train_loader,val_loader, model, 200, criterion,optimizer,scheduler,device)
+    criterion = SRGAN.GeneratorLoss()
+    optimizerG = torch.optim.SGD(params=netG.parameters(), lr =0.01,momentum=0.9)
+    optimizerD = torch.optim.SGD(params=netD.parameters(), lr =0.01,momentum=0.9)
 
-    checkpoint = torch.load('checkpoint/best_SRCNN.pth')
-    model.load_state_dict(checkpoint, strict=False)
+    schedulerG = torch.optim.lr_scheduler.StepLR(optimizerG,step_size= 5,gamma=0.3)
+    schedulerD = torch.optim.lr_scheduler.StepLR(optimizerD,step_size= 5,gamma=0.3)
 
-    pred_img_list, pred_name_list = inference(model, test_loader,device)
+    history = {'d_loss':[], 'g_loss':[],'d_score':[],'g_score':[],'psnr':[],'ssim':[]}
+    best_psnr = 0.0
+    count =1
+    for epoch in range(1, EPOCH+1):
+        netG.to(device)
+        netD.to(device)
+        netG.train()
+        netD.train()
+        running_g_loss = 0.0
+        running_d_loss = 0.0
+        for lr_img, hr_img in tqdm(iter(train_loader)):
+            lr_img= lr_img.to(device)
+            hr_img= hr_img.to(device)
+
+            # update Net D
+            fake_img = netG(lr_img)
+            netD.zero_grad()
+            real_out = netD(hr_img).mean()
+            fake_out = netD(fake_img).mean()
+            d_loss = 1-real_out + fake_out
+            # 기울기가 연산하고 없어지지 않도록
+            d_loss.backward(retain_graph=True)
+            optimizerD.step()
+
+            # update Net G
+            netG.zero_grad()
+            fake_img = netG(lr_img)
+            fake_out = netD(fake_img).mean()
+            g_loss = criterion(fake_out,fake_img,hr_img)
+            g_loss.backward()
+
+            fake_img = netG(lr_img)
+            fake_out = netD(fake_img).mean()
+            optimizerG.step()
+
+            running_g_loss +=g_loss.item() 
+            running_d_loss +=d_loss.item() 
+        print(f'{epoch} Train Loss G : {running_g_loss:.5f}, Loss D : {running_d_loss:.5f}')
+        
+        # val data
+        netG.eval()
+        with torch.no_grad():
+            for val_lr, val_hr in tqdm(iter(val_loader)):
+                val_lr = val_lr.to(device)
+                val_hr = val_hr.to(device)
+
+                sr = netG(val_lr)
+                
+                mse = ((sr-val_hr)**2).data.mean()
+                ssim = pytorch_ssim.ssim(sr,val_hr).item()
+                psnr = 10*math.log10((val_hr.max()**2)/mse)
+        history['d_loss'].append(running_d_loss)
+        history['g_loss'].append(running_g_loss)
+        history['psnr'].append(psnr)
+        history['ssim'].append(ssim)
+
+        if best_psnr < psnr:
+            torch.save(netG.state_dict(),f'checkpoint/best_netG_{psnr}.pth')
+            torch.save(netD.state_dict(),f'checkpoint/best_netD_{psnr}.pth')
+            print('Model Saved')
+            best_psnr = psnr
+            count = 1
+        else:
+            if count > 5:
+                print('Early Stopping')
+                break
+            count +=1
+
+    checkpoint = torch.load(f'checkpoint/best_netG_{best_psnr}.pth')
+    netG.load_state_dict(checkpoint, strict=False)
+
+    pred_img_list, pred_name_list = inference(netG, test_loader,device)
 
     os.chdir('/workspace/Torch/dacon/ISR/data/submission/')
     # os.chdir('./data/submission/')
@@ -210,7 +256,7 @@ if __name__ =='__main__':
         cv2.imwrite(path,pred_img)
         sub_imgs.append(path)
 
-    submission = zipfile.ZipFile('../submission1.zip','w')
+    submission = zipfile.ZipFile('../submission_SRGAN.zip','w')
     for path in sub_imgs:
         submission.write(path)
     submission.close()
