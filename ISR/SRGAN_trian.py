@@ -14,8 +14,9 @@ import pytorch_ssim
 import math
 
 class CustomDataset(torch.utils.data.Dataset):
-    def __init__(self, img_list, transform=None, train_mode=True):
+    def __init__(self, img_list, transform=None,hr_transform=None, train_mode=True):
         self.transform = transform
+        self.hr_transform = hr_transform
         self.train_mode = train_mode
 
         self.low_list = img_list['LR']
@@ -32,8 +33,8 @@ class CustomDataset(torch.utils.data.Dataset):
         if self.train_mode:
             high_path = './data/'+self.high_list.iloc[index][1:]
             high_img = PIL.Image.open(high_path)
-            if self.transform is not None:
-                high_img = self.transform(high_img)
+            if self.hr_transform is not None:
+                high_img = self.hr_transform(high_img)
             return low_img, high_img
         else:
             file_name = low_path.split('/')[-1]
@@ -140,8 +141,16 @@ if __name__ =='__main__':
         torchvision.transforms.Resize([IMG_SIZE,IMG_SIZE]),
         torchvision.transforms.ToTensor(),
     ])
+    train_hr_transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+    ])
+
     test_transform = torchvision.transforms.Compose([
         torchvision.transforms.Resize([IMG_SIZE,IMG_SIZE]),
+        torchvision.transforms.ToTensor(),
+    ])
+
+    test_hr_transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
     ])
 
@@ -150,14 +159,14 @@ if __name__ =='__main__':
     train_list = train_list[0:int(len(train_list)*0.75)]
     val_list = train_list[int(len(train_list)*0.75):]
 
-    train_dataset = CustomDataset(train_list,train_transform,train_mode=True)
+    train_dataset = CustomDataset(train_list,train_transform,train_hr_transform,train_mode=True)
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=BATCH_SIZE,
         shuffle=True
         )
 
-    val_dataset = CustomDataset(val_list,test_transform,train_mode=True)
+    val_dataset = CustomDataset(val_list,test_transform,test_hr_transform,train_mode=True)
     val_loader = torch.utils.data.DataLoader(val_dataset,BATCH_SIZE,False)
 
 
@@ -166,8 +175,8 @@ if __name__ =='__main__':
     test_dataset = CustomDataset(test_list,test_transform,train_mode=False)
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
-    netG = SRGAN.Generator
-    netD = SRGAN.Discriminator
+    netG = SRGAN.Generator(4)
+    netD = SRGAN.Discriminator()
 
     criterion = SRGAN.GeneratorLoss()
     optimizerG = torch.optim.SGD(params=netG.parameters(), lr =0.01,momentum=0.9)

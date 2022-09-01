@@ -119,7 +119,7 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
                 print('Early Stopping')
                 break
         else:
-            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2.pth')
+            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2_{val_loss}.pth')
             print('Model Saved')
             best_loss = val_loss
             count = 1
@@ -192,7 +192,7 @@ if __name__ =='__main__':
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
     model = SRCNN()
-    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.005,momentum=0.9)
+    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.01,momentum=0.9)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma=0.3)
     criterion = torch.nn.MSELoss()
 
