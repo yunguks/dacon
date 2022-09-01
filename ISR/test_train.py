@@ -21,14 +21,14 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __getitem__(self,index):
         low_path = './data/'+self.low_list.iloc[index][1:]
-        low_img = PIL.Image.open(low_path)
-        
+        low_img = cv2.imread(low_path)
+        low_img = cv2.resize(low_img,(2048,2048),interpolation=cv2.INTER_CUBIC)
         if self.transform is not None:
             low_img=self.transform(low_img)
         
         if self.train_mode:
             high_path = './data/'+self.high_list.iloc[index][1:]
-            high_img = PIL.Image.open(high_path)
+            high_img = cv2.imread(high_path)
             if self.transform is not None:
                 high_img = self.transform(high_img)
             return low_img, high_img
@@ -78,11 +78,11 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
     count = 0
     for epoch in range(1,epochs+1):
         model.train()
-        running_loss =0.0
+        running_loss =[]
 
-        for data in tqdm(iter(train_loader)):
-            lr_img = data[0].to(device)
-            hr_img = data[1].to(device)
+        for lr_img,hr_img in tqdm(iter(train_loader)):
+            lr_img = lr_img.to(device)
+            hr_img = hr_img.to(device)
 
             optimizer.zero_grad()
 
@@ -92,40 +92,40 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
             loss.backward()
             optimizer.step()
 
-            running_loss += loss.item()
+            running_loss.append(loss.item())
         
         if scheduler is not None:
             scheduler.step()
         
         # val
         model.eval()
-        val_loss = 0.0
+        val_loss = []
         with torch.no_grad():
-            for data in tqdm(iter(val_loader)):
-                ir_img = data[0].to(device)
-                hr_img = data[1].to(device)
+            for lr_img,hr_img in tqdm(iter(val_loader)):
+                ir_img = lr_img.to(device)
+                hr_img = hr_img.to(device)
 
                 outputs = model(ir_img)
                 loss = criterion(outputs,hr_img)
 
-                val_loss +=loss.item()
-        print(f'{epoch} Train Loss : {running_loss:.5f}')
-        print(f'val_loss : {val_loss:.5f}')
+                val_loss.append(loss.item())
+        print(f'{epoch} Train Loss : {np.mean(running_loss):.5f}')
+        print(f'val_loss : {np.mean(val_loss):.5f}')
         
         # early stopping 
-        if best_loss <= val_loss:
+        if best_loss <= np.mean(val_loss):
             count +=1
             if count >4:
                 print('Early Stopping')
                 break
         else:
-            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2_{val_loss}.pth')
+            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2_{val_loss:.5f}.pth')
             print('Model Saved')
             best_loss = val_loss
             count = 1
 
-        history['train_loss'].append(running_loss)
-        history['val_loss'].append(val_loss)
+        history['train_loss'].append(np.mean(running_loss))
+        history['val_loss'].append(np.mean(val_loss))
     return history
 
 def inference(model, test_loader ,device):
@@ -162,11 +162,9 @@ if __name__ =='__main__':
     IMG_SIZE=2048
 
     train_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize([IMG_SIZE,IMG_SIZE]),
         torchvision.transforms.ToTensor(),
     ])
     test_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize([IMG_SIZE,IMG_SIZE]),
         torchvision.transforms.ToTensor(),
     ])
 
@@ -192,9 +190,9 @@ if __name__ =='__main__':
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
     model = SRCNN()
-    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.01,momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma=0.3)
-    criterion = torch.nn.MSELoss()
+    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.1,momentum=0.9)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 5,gamma=0.5)
+    criterion = torch.nn.MSELoss().to(device)
 
     history = train(train_loader,val_loader, model, 200, criterion,optimizer,scheduler,device)
 

@@ -44,86 +44,6 @@ class CustomDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.low_list)
 
-def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler=None, device='cpu'):
-    model.to(device)
-    best_loss = 9999
-    history = {}
-    history['train_loss'] = []
-    history['val_loss'] = []
-    count = 0
-    for epoch in range(1,epochs+1):
-        model.train()
-        running_loss =0.0
-
-        for data in tqdm(iter(train_loader)):
-            lr_img = data[0].to(device)
-            hr_img = data[1].to(device)
-
-            optimizer.zero_grad()
-
-            outputs = model(lr_img)
-            loss = criterion(outputs,hr_img)
-
-            loss.backward()
-            optimizer.step()
-
-            running_loss += loss.item()
-        
-        if scheduler is not None:
-            scheduler.step()
-        
-        # val
-        model.eval()
-        val_loss = 0.0
-        with torch.no_grad():
-            for data in tqdm(iter(val_loader)):
-                ir_img = data[0].to(device)
-                hr_img = data[1].to(device)
-
-                outputs = model(ir_img)
-                loss = criterion(outputs,hr_img)
-
-                val_loss +=loss.item()
-        print(f'{epoch} Train Loss : {running_loss:.5f}')
-        print(f'val_loss : {val_loss:.5f}')
-        
-        # early stopping 
-        if best_loss <= val_loss:
-            count +=1
-            if count >4:
-                print('Early Stopping')
-                break
-        else:
-            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2.pth')
-            print('Model Saved')
-            best_loss = val_loss
-            count = 1
-
-        history['train_loss'].append(running_loss)
-        history['val_loss'].append(val_loss)
-    return history
-
-def inference(model, test_loader ,device):
-    model.to(device)
-    model.eval()
-    pred_img_list = []
-    name_list = []
-    with torch.no_grad():
-        for lr_img, file_name in tqdm(iter(test_loader)):
-            lr_img = lr_img.float().to(device)
-
-            pred_img = model(lr_img)
-
-            for pred, name in zip(pred_img,file_name):
-                pred = pred.cpu().clone().detach().numpy()
-                pred = pred.transpose(1,2,0)
-                pred = pred*255
-
-                pred_img_list.append(pred.astype('uint8'))
-                name_list.append(name)
-    return pred_img_list,name_list
-
-
 if __name__ =='__main__':
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     print(device)
@@ -178,7 +98,7 @@ if __name__ =='__main__':
     netG = SRGAN.Generator(4)
     netD = SRGAN.Discriminator()
 
-    criterion = SRGAN.GeneratorLoss()
+    criterion = SRGAN.GeneratorLoss().to(device)
     optimizerG = torch.optim.SGD(params=netG.parameters(), lr =0.01,momentum=0.9)
     optimizerD = torch.optim.SGD(params=netD.parameters(), lr =0.01,momentum=0.9)
 
