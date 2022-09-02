@@ -1,7 +1,7 @@
 import math
 import torch
 from torch import nn
-from torchvision.models.vgg import vgg16
+from torchvision.models import vgg, VGG16_Weights
 
 class Generator(nn.Module):
     def __init__(self, scale_factor=4):
@@ -24,7 +24,6 @@ class Generator(nn.Module):
         block8 = [UpsampleBLock(64, 2) for _ in range(upsample_block_num)]
         block8.append(nn.Conv2d(64, 3, kernel_size=9, stride=1, padding=4))
         self.block8 = nn.Sequential(*block8)
-        print(self.block8)
 
     def forward(self, x):
         block1 = self.block1(x)
@@ -123,8 +122,8 @@ class UpsampleBLock(nn.Module):
 class GeneratorLoss(nn.Module):
     def __init__(self):
         super(GeneratorLoss, self).__init__()
-        vgg = vgg16(pretrained=True)
-        loss_network = nn.Sequential(*list(vgg.features)[:31]).eval()
+        v = vgg.vgg16(weights=VGG16_Weights.IMAGENET1K_V1)
+        loss_network = nn.Sequential(*list(v.features)[:31]).eval()
         for param in loss_network.parameters():
             param.requires_grad = False
         self.loss_network = loss_network

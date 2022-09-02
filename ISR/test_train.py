@@ -1,3 +1,4 @@
+from cProfile import run
 import pandas as pd
 import numpy as np
 import torch
@@ -6,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 import cv2
 import os
 from tqdm.auto import tqdm
-import PIL
+from PIL import Image
 import gc
 import zipfile
 
@@ -21,14 +22,14 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __getitem__(self,index):
         low_path = './data/'+self.low_list.iloc[index][1:]
-        low_img = cv2.imread(low_path)
-        low_img = cv2.resize(low_img,(2048,2048),interpolation=cv2.INTER_CUBIC)
+        low_img = Image.open(low_path)
+        low_img = low_img.resize([2048,2048])
         if self.transform is not None:
             low_img=self.transform(low_img)
         
         if self.train_mode:
             high_path = './data/'+self.high_list.iloc[index][1:]
-            high_img = cv2.imread(high_path)
+            high_img = Image.open(high_path)
             if self.transform is not None:
                 high_img = self.transform(high_img)
             return low_img, high_img
@@ -78,7 +79,7 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
     count = 0
     for epoch in range(1,epochs+1):
         model.train()
-        running_loss =[]
+        running_loss = []
 
         for lr_img,hr_img in tqdm(iter(train_loader)):
             lr_img = lr_img.to(device)
@@ -93,10 +94,10 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
             optimizer.step()
 
             running_loss.append(loss.item())
-        
+            #print(f'{loss.item():.5f}')
         if scheduler is not None:
             scheduler.step()
-        
+
         # val
         model.eval()
         val_loss = []
@@ -119,9 +120,9 @@ def train(train_loader,val_loader, model, epochs,criterion, optimizer, scheduler
                 print('Early Stopping')
                 break
         else:
-            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2_{val_loss:.5f}.pth')
+            torch.save(model.state_dict(),f'checkpoint/best_SRCNN2_{np.mean(val_loss):.5f}.pth')
             print('Model Saved')
-            best_loss = val_loss
+            best_loss = np.mean(val_loss)
             count = 1
 
         history['train_loss'].append(np.mean(running_loss))
@@ -152,6 +153,10 @@ def inference(model, test_loader ,device):
 if __name__ =='__main__':
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     print(device)
+    
+    GPU_NUM = 1 # 원하는 GPU 번호 입력
+    device = torch.device(f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
+    torch.cuda.set_device(device) # change allocation of current GPU
     torch.cuda.empty_cache()
     gc.collect()
 
@@ -190,8 +195,8 @@ if __name__ =='__main__':
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
     model = SRCNN()
-    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.1,momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 5,gamma=0.5)
+    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.001,momentum=0.9)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma=0.3)
     criterion = torch.nn.MSELoss().to(device)
 
     history = train(train_loader,val_loader, model, 200, criterion,optimizer,scheduler,device)
@@ -205,7 +210,7 @@ if __name__ =='__main__':
     # os.chdir('./data/submission/')
     sub_imgs = []
     for path, pred_img in tqdm(zip(pred_name_list,pred_img_list)):
-        cv2.imwrite(path,pred_img)
+        pred_img.save(path)
         sub_imgs.append(path)
 
     submission = zipfile.ZipFile('../submission1.zip','w')

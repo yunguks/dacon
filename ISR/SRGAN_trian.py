@@ -44,16 +44,40 @@ class CustomDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.low_list)
 
+def inference(model, test_loader ,device):
+    model.to(device)
+    model.eval()
+    pred_img_list = []
+    name_list = []
+    with torch.no_grad():
+        for lr_img, file_name in tqdm(iter(test_loader)):
+            lr_img = lr_img.float().to(device)
+
+            pred_img = model(lr_img)
+
+            for pred, name in zip(pred_img,file_name):
+                pred = pred.cpu().clone().detach().numpy()
+                pred = pred.transpose(1,2,0)
+                pred = pred*255
+
+                pred_img_list.append(pred.astype('uint8'))
+                name_list.append(name)
+    return pred_img_list,name_list
+
 if __name__ =='__main__':
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     print(device)
+    GPU_NUM = 1 # 원하는 GPU 번호 입력
+    device = torch.device(f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
+    torch.cuda.set_device(device) # change allocation of current GPU
+
     torch.cuda.empty_cache()
     gc.collect()
 
     csv_path = os.getcwd()+'/data/train.csv'
     df = pd.read_csv(csv_path)
 
-    BATCH_SIZE =4
+    BATCH_SIZE =1
     IMG_SIZE=2048
     EPOCH=200
 
@@ -99,8 +123,8 @@ if __name__ =='__main__':
     netD = SRGAN.Discriminator()
 
     criterion = SRGAN.GeneratorLoss().to(device)
-    optimizerG = torch.optim.SGD(params=netG.parameters(), lr =0.01,momentum=0.9)
-    optimizerD = torch.optim.SGD(params=netD.parameters(), lr =0.01,momentum=0.9)
+    optimizerG = torch.optim.SGD(params=netG.parameters(), lr =0.1,momentum=0.9)
+    optimizerD = torch.optim.SGD(params=netD.parameters(), lr =0.1,momentum=0.9)
 
     schedulerG = torch.optim.lr_scheduler.StepLR(optimizerG,step_size= 5,gamma=0.3)
     schedulerD = torch.optim.lr_scheduler.StepLR(optimizerD,step_size= 5,gamma=0.3)
@@ -182,7 +206,7 @@ if __name__ =='__main__':
     # os.chdir('./data/submission/')
     sub_imgs = []
     for path, pred_img in tqdm(zip(pred_name_list,pred_img_list)):
-        cv2.imwrite(path,pred_img)
+        pred_img.save(path)
         sub_imgs.append(path)
 
     submission = zipfile.ZipFile('../submission_SRGAN.zip','w')
