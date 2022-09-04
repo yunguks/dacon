@@ -1,4 +1,3 @@
-from cProfile import run
 import pandas as pd
 import numpy as np
 import torch
@@ -152,18 +151,19 @@ def inference(model, test_loader ,device):
 
 if __name__ =='__main__':
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    print(device)
     
-    GPU_NUM = 1 # 원하는 GPU 번호 입력
+    GPU_NUM = 0 # 원하는 GPU 번호 입력
     device = torch.device(f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
+    print(device)
     torch.cuda.set_device(device) # change allocation of current GPU
     torch.cuda.empty_cache()
-    gc.collect()
+    #gc.collect()
+    os.environ['CUDA_LAUNCH_BLOCKING']="1"
 
     csv_path = os.getcwd()+'/data/train.csv'
     df = pd.read_csv(csv_path)
 
-    BATCH_SIZE =4
+    BATCH_SIZE =2
     IMG_SIZE=2048
 
     train_transform = torchvision.transforms.Compose([
@@ -195,13 +195,13 @@ if __name__ =='__main__':
     test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
     model = SRCNN()
-    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.001,momentum=0.9)
+    optimizer = torch.optim.SGD(params=model.parameters(), lr =0.01,momentum=0.9)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma=0.3)
     criterion = torch.nn.MSELoss().to(device)
 
-    history = train(train_loader,val_loader, model, 200, criterion,optimizer,scheduler,device)
+    #history = train(train_loader,val_loader, model, 200, criterion,optimizer,scheduler,device)
 
-    checkpoint = torch.load('checkpoint/best_SRCNN.pth')
+    checkpoint = torch.load('checkpoint/best_SRCNN2_0.01026.pth')
     model.load_state_dict(checkpoint, strict=False)
 
     pred_img_list, pred_name_list = inference(model, test_loader,device)
@@ -210,6 +210,8 @@ if __name__ =='__main__':
     # os.chdir('./data/submission/')
     sub_imgs = []
     for path, pred_img in tqdm(zip(pred_name_list,pred_img_list)):
+        # numpy -> image
+        pred_img = Image.fromarray(pred_img)
         pred_img.save(path)
         sub_imgs.append(path)
 

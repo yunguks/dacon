@@ -33,10 +33,10 @@ class Generator(nn.Module):
         block5 = self.block5(block4)
         block6 = self.block6(block5)
         block7 = self.block7(block6)
-        ad = block1 + block7
-        block8 = self.block8(ad)
-        output = (torch.tanh(block8) + 1) / 2
-        return output
+        # [batch, 64, 512,512]
+        out = self.block8(block1+block7)
+        # [batch, 3, 2048, 2048]
+        return  (torch.tanh(out) + 1) / 2
 
 
 class Discriminator(nn.Module):
@@ -108,15 +108,19 @@ class ResidualBlock(nn.Module):
 class UpsampleBLock(nn.Module):
     def __init__(self, in_channels, up_scale):
         super(UpsampleBLock, self).__init__()
-        self.conv = nn.Conv2d(in_channels, in_channels * up_scale ** 2, kernel_size=3, stride=1,padding=1)
+        out_channel = in_channels * (up_scale**2)
+        self.conv = nn.Conv2d(in_channels, out_channel, kernel_size=3, stride=1,padding=1)
         self.pixel_shuffle = nn.PixelShuffle(up_scale)
         self.prelu = nn.PReLU()
 
     def forward(self, x):
+        # [batch , 64, 512, 512]
         x = self.conv(x)
+        # [batch, 256, 512, 512]
         x = self.pixel_shuffle(x)
+        # [batch, 64, 1024, 1024]
         x = self.prelu(x)
-        return 
+        return x
 
 
 class GeneratorLoss(nn.Module):
