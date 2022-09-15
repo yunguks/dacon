@@ -50,7 +50,7 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __getitem__(self,index,check=False):
         n = random.randrange(64)
-        low_path = './data'+self.low_list.iloc[index][1:-4]+'_'+str(n)+'.png'
+        low_path = './data'+self.low_list.iloc[index][1:]
         low_img = cv2.imread(low_path)
 
         if check:
@@ -58,13 +58,15 @@ class CustomDataset(torch.utils.data.Dataset):
             print(f'image shape : {low_img.shape}')
         
         if self.transform is not None:
+            torch.manual_seed(41)
             low_img=self.transform(low_img)
 
         
         if self.train_mode:
-            high_path = './data'+self.high_list.iloc[index][1:-4]+'_'+str(n)+'.png'
+            high_path = './data'+self.high_list.iloc[index][1:]
             high_img = cv2.imread(high_path)
             if self.transform is not None:
+                torch.manual_seed(41)
                 high_img = self.transform(high_img)
             return low_img, high_img
         else:
@@ -79,6 +81,8 @@ seed_everything(41)
 
 train_transform = torchvision.transforms.Compose([
     torchvision.transforms.ToPILImage(),
+    torchvision.transforms.RandomHorizontalFlip(),
+    torchvision.transforms.RandomVerticalFlip(),
     torchvision.transforms.ToTensor(),
 ])
 
@@ -158,7 +162,7 @@ class EDSR(nn.Module):
 
 BATCH_SIZE =16
 
-train_list = pd.read_csv('./data/train.csv')
+train_list = pd.read_csv('./data/train_patch.csv')
 train_list = train_list[0:int(len(train_list)*0.75)]
 val_list = train_list[int(len(train_list)*0.75):]
 print(f'train data : {len(train_list)}, val data : {len(val_list)}')
@@ -181,7 +185,7 @@ test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
 model = EDSR()
 criterion = nn.L1Loss()
-optimizer = torch.optim.Adam(params=model.parameters(), lr =0.0001)
+optimizer = torch.optim.Adam(params=model.parameters(), lr =0.00005)
 
 scheduler = None
 print('parameter set')
