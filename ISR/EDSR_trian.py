@@ -56,6 +56,7 @@ class CustomDataset(torch.utils.data.Dataset):
         if check:
             print(f'image path : {low_path}')
             print(f'image shape : {low_img.shape}')
+            print(F'image type : {type(low_img)}')
         
         if self.transform is not None:
             torch.manual_seed(41)
@@ -115,12 +116,10 @@ class MeanShift(nn.Module):
 class ResBlock(nn.Module):
     def __init__(self, n_feats, res_scale=0.1):
         super(ResBlock, self).__init__()
-        m = []
 
         self.act = nn.ReLU(True)
-        self.conv1 = nn.Conv2d(n_feats, n_feats,kernel_size =3 , padding =1)
-        self.conv2 = nn.Conv2d(n_feats, n_feats,kernel_size =3 , padding =1)
-        self.body = nn.Sequential(*m)
+        self.conv1 = nn.Conv2d(n_feats, n_feats,kernel_size =3,bias=True , padding =1)
+        self.conv2 = nn.Conv2d(n_feats, n_feats,kernel_size =3,bias=True , padding =1)
         self.res_scale = res_scale
 
     def forward(self, x):
@@ -149,7 +148,8 @@ class EDSR(nn.Module):
             nn.ReLU(),
             nn.Conv2d(num_feats, num_channels, kernel_size=3, stride=1, padding=1),
         )
-    
+        self.initialize_weights()
+
     def forward(self, x):
         x = self.sub_mean(x)
         x = self.head(x)
@@ -159,6 +159,16 @@ class EDSR(nn.Module):
         x = self.add_mean(x)
 
         return x
+    def initialize_weights(self):
+        # track all layers
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
 BATCH_SIZE =16
 
