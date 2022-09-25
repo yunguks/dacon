@@ -227,9 +227,8 @@ train_loader = torch.utils.data.DataLoader(
     shuffle=True
     )
 
-val_dataset = CustomDataset(val_list,test_transform,train_mode=True)
-val_loader = torch.utils.data.DataLoader(val_dataset,BATCH_SIZE,False)
-
+val_dataset = test_CustomDataset(val_list,test_transform,train_mode=True)
+val_loader = torch.utils.data.DataLoader(val_dataset,1,False)
 
 test_list = pd.read_csv('./Dataset/test.csv')
 print(f'test data : {len(test_list)}')
