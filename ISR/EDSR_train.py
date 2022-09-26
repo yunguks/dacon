@@ -155,19 +155,38 @@ class MeanShift(nn.Module):
         x = self.shifter(x)
         return x
 
+class Upsampler(nn.Sequential):
+    def __init__(self, n_feats, bn=False, act=False, bias=True):
+        m = []
+        for _ in range(2):
+            m.append(nn.Conv2d(n_feats, 4 * n_feats, 3, stride=1, padding =1, bias=bias))
+            m.append(nn.PixelShuffle(2))
+            if bn:
+                m.append(nn.BatchNorm2d(n_feats))
+            if act == 'relu':
+                m.append(nn.ReLU(True))
+            elif act == 'prelu':
+                m.append(nn.PReLU(n_feats))
+        super(Upsampler, self).__init__(*m)
+
 class ResBlock(nn.Module):
     def __init__(self, n_feats, res_scale=0.1):
         super(ResBlock, self).__init__()
 
         self.act = nn.ReLU(True)
-        self.conv1 = nn.Conv2d(n_feats, n_feats,kernel_size =3, padding =1)
-        self.conv2 = nn.Conv2d(n_feats, n_feats,kernel_size =3, padding =1)
+        self.res_scale = res_scale
+
+        m = []
+        for i in range(2):
+            m.append(nn.Conv2d(n_feats, n_feats, kernel_size=3,padding=1,bias=True))
+            if i == 0:
+                m.append(self.act)
+
+        self.body = nn.Sequential(*m)
         self.res_scale = res_scale
 
     def forward(self, x):
-        res = self.conv1(x)
-        res = self.act(res)
-        res = self.conv2(res).mul(self.res_scale)
+        res = self.body(x).mul(self.res_scale)
         res += x
         return res
 
@@ -180,16 +199,14 @@ class EDSR(nn.Module):
 
         self.head = nn.Conv2d(num_channels, num_feats, kernel_size=3,bias=True, padding=3//2)
         body = [ResBlock(num_feats, res_scale) for _ in range(num_blocks)]
+        body.append(nn.Conv2d(num_feats, num_feats, kernel_size=3,padding=1))
         self.body = nn.Sequential(*body)
-        self.tail = nn.Sequential(
-            nn.Conv2d(num_feats, num_feats * (2**2), kernel_size=3, stride=1, padding=1), 
-            nn.PixelShuffle(2),
-            #nn.ReLU(True),
-            nn.Conv2d(num_feats, num_feats * (2**2), kernel_size=3, stride=1, padding=1), 
-            nn.PixelShuffle(2),
-            #nn.ReLU(True),
-            nn.Conv2d(num_feats, num_channels, kernel_size=3, stride=1, padding=1),
-        )
+
+        tail = [
+            Upsampler(num_feats),
+            nn.Conv2d(num_feats, num_channels, kernel_size=3, stride=1, padding=1, bias=True),
+        ]
+        self.tail = nn.Sequential(*tail)
         self.initialize_weights()
 
     def forward(self, x):
@@ -216,8 +233,8 @@ class EDSR(nn.Module):
 BATCH_SIZE =16
 
 train_list = pd.read_csv('./Dataset/train.csv')
-train_list = train_list[0:int(len(train_list)*0.75)]
-val_list = train_list[int(len(train_list)*0.75):]
+train_list = train_list[0:int(len(train_list)*0.8)]
+val_list = train_list[int(len(train_list)*0.8):]
 print(f'train data : {len(train_list)}, val data : {len(val_list)}')
 
 train_dataset = CustomDataset(train_list,train_transform,train_mode=True)
@@ -236,9 +253,12 @@ test_dataset = CustomDataset(test_list,test_transform,train_mode=False)
 test_loader = DataLoader(test_dataset,BATCH_SIZE,False)
 
 model = EDSR()
+load_model = torch.load('./checkpoint/edsr_x4-4f62e9ef.pt',map_location=device)
+model.load_state_dict(load_model, strict=False)
+
 criterion = nn.L1Loss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0002)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5000, gamma=0.5)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=2,eta_min=1e-8)
 scheduler = None
 print('parameter set')
 
@@ -270,7 +290,6 @@ for epoch in range(1, EPOCH+1):
         loss.backward()
         running_loss +=loss.item()
         optimizer.step()
-    
     print(f'{epoch} Train Loss : {running_loss/len(train_loader):5f}')
     
     # val data
