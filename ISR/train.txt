@@ -67,3 +67,12 @@ Model Saved
 56 Train Loss : 0.055321
 57 Train Loss : 0.054056
 58 Train Loss : 0.053388
+59 Train Loss : 0.053946
+60 Train Loss : 0.053465
+Val psnr : 21.17743
+Model Saved
+61 Train Loss : 0.053209
+62 Train Loss : 0.054128
+63 Train Loss : 0.057089
+64 Train Loss : 0.054928
+65 Train Loss : 0.053796
