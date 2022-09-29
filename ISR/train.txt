@@ -1,0 +1,69 @@
+cuda:0
+torch version : 1.12.1
+train data : 1312, val data : 263
+test data : 18
+parameter set
+start train
+328.7548828125
+1 Train Loss : 0.140693
+2 Train Loss : 0.071984
+3 Train Loss : 0.068642
+4 Train Loss : 0.069191
+5 Train Loss : 0.069878
+6 Train Loss : 0.066325
+7 Train Loss : 0.062423
+8 Train Loss : 0.062175
+9 Train Loss : 0.064346
+10 Train Loss : 0.060992
+11 Train Loss : 0.061001
+12 Train Loss : 0.059433
+13 Train Loss : 0.061758
+14 Train Loss : 0.062235
+15 Train Loss : 0.061405
+16 Train Loss : 0.059978
+17 Train Loss : 0.058190
+18 Train Loss : 0.061009
+19 Train Loss : 0.059189
+20 Train Loss : 0.060396
+Val psnr : 20.67194
+Model Saved
+21 Train Loss : 0.058483
+22 Train Loss : 0.057667
+23 Train Loss : 0.057631
+24 Train Loss : 0.059500
+25 Train Loss : 0.059126
+26 Train Loss : 0.057636
+27 Train Loss : 0.057420
+28 Train Loss : 0.056187
+29 Train Loss : 0.058923
+30 Train Loss : 0.058189
+31 Train Loss : 0.056011
+32 Train Loss : 0.056533
+33 Train Loss : 0.057910
+34 Train Loss : 0.057600
+35 Train Loss : 0.055762
+36 Train Loss : 0.055275
+37 Train Loss : 0.055319
+38 Train Loss : 0.057795
+39 Train Loss : 0.054264
+40 Train Loss : 0.055639
+Val psnr : 21.06472
+Model Saved
+41 Train Loss : 0.054425
+42 Train Loss : 0.055303
+43 Train Loss : 0.055303
+44 Train Loss : 0.054512
+45 Train Loss : 0.055588
+46 Train Loss : 0.055244
+47 Train Loss : 0.055575
+48 Train Loss : 0.055213
+49 Train Loss : 0.054830
+50 Train Loss : 0.054518
+51 Train Loss : 0.055283
+52 Train Loss : 0.054105
+53 Train Loss : 0.053834
+54 Train Loss : 0.054439
+55 Train Loss : 0.053820
+56 Train Loss : 0.055321
+57 Train Loss : 0.054056
+58 Train Loss : 0.053388
