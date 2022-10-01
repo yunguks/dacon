@@ -232,9 +232,9 @@ class EDSR(nn.Module):
 
 BATCH_SIZE =16
 
-train_list = pd.read_csv('./Dataset/train.csv')
-train_list = train_list[int(len(train_list))*0.2:]
-val_list = train_list[:int(len(train_list))*0.2]
+all_list = pd.read_csv('/home/seunmul/dacon/ISR/Dataset/train.csv')
+train_list = all_list[int(len(all_list)*0.2):]
+val_list = all_list[:int(len(all_list)*0.2)]
 print(f'train data : {len(train_list)}, val data : {len(val_list)}')
 
 train_dataset = CustomDataset(train_list,train_transform,train_mode=True)
@@ -259,7 +259,7 @@ model.load_state_dict(load_model, strict=False)
 criterion = nn.L1Loss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.00005)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=2,eta_min=1e-7)
-scheduler = None
+#scheduler = None
 print('parameter set')
 
 from tqdm import tqdm
@@ -290,6 +290,7 @@ for epoch in range(1, EPOCH+1):
         loss.backward()
         running_loss +=loss.item()
         optimizer.step()
+        scheduler.step()
     print(f'{epoch} Train Loss : {running_loss/len(train_loader):5f}')
     
     # val data
