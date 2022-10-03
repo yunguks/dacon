@@ -16,6 +16,18 @@ os.environ['CUDA_LAUNCH_BLOCKING']="1"
 print(device)
 print(f'torch version : {torch.__version__}')
 
+import torchvision.transforms.functional as TF
+from typing import Sequence
+
+class MyRotateTransform:
+    def __init__(self, angles: Sequence[int]):
+        self.angles = angles
+
+    def __call__(self, x):
+        angle = random.choice(self.angles)
+        return TF.rotate(x, angle)
+
+
 import math
 def cal_psnr(img1,img2):
     PIXEL_MAX = 1.0
@@ -37,6 +49,7 @@ def seed_everything(seed):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
+
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, img_list, transform=None, train_mode=True):
@@ -123,7 +136,9 @@ seed_everything(41)
 train_transform = torchvision.transforms.Compose([
     torchvision.transforms.ToPILImage(),
     #torchvision.transforms.RandomHorizontalFlip(),
+    torchvision.transforms.ColorJitter(brightness=0.2, contrast=0.2),
     torchvision.transforms.ToTensor(),
+    MyRotateTransform([-90,0,90]),
 ])
 
 test_transform = torchvision.transforms.Compose([
@@ -257,8 +272,8 @@ load_model = torch.load('./checkpoint/edsr_x4-4f62e9ef.pt',map_location=device)
 model.load_state_dict(load_model, strict=False)
 
 criterion = nn.L1Loss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.00005)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=2,eta_min=1e-7)
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.0001)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=2,eta_min=1e-8)
 #scheduler = None
 print('parameter set')
 
