@@ -5,3 +5,4 @@ test data : 18
 parameter set
 start train
 328.7548828125
+1 Train Loss : 3969047760121.755859

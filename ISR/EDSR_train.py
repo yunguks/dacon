@@ -135,7 +135,7 @@ seed_everything(41)
 
 train_transform = torchvision.transforms.Compose([
     torchvision.transforms.ToPILImage(),
-    #torchvision.transforms.RandomHorizontalFlip(),
+    torchvision.transforms.RandomHorizontalFlip(),
     torchvision.transforms.ColorJitter(brightness=0.2, contrast=0.2),
     torchvision.transforms.ToTensor(),
     MyRotateTransform([-90,0,90]),
@@ -272,7 +272,7 @@ load_model = torch.load('./checkpoint/edsr_x4-4f62e9ef.pt',map_location=device)
 model.load_state_dict(load_model, strict=False)
 
 criterion = nn.L1Loss()
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.0001)
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.00009)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=2,eta_min=1e-8)
 #scheduler = None
 print('parameter set')
@@ -304,6 +304,7 @@ for epoch in range(1, EPOCH+1):
 
         loss.backward()
         running_loss +=loss.item()
+        #print(loss.item())
         optimizer.step()
         scheduler.step()
     print(f'{epoch} Train Loss : {running_loss/len(train_loader):5f}')
