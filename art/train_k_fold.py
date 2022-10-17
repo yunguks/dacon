@@ -34,17 +34,17 @@ class BaseModel(nn.Module):
     def __init__(self, num_classes=50,name='regnet'):
         super(BaseModel, self).__init__()
         if name =='convnext':
-            self.backbone = timm.models.convnext.convnext_small(pretrained=True)
+            self.backbone = timm.models.convnext.convnext_small(pretrained=True,num_classes=50)
         elif name =='eiffcient':
-            self.backbone = timm.models.efficientnet.efficientnet_b0(pretrained=True)
+            self.backbone = timm.models.efficientnet.efficientnet_b0(pretrained=True,num_classes=50)
         else:
-            self.backbone = timm.models.regnetx_064(pretrained=True)
-        self.classifier = nn.Linear(1000, num_classes)
-        self.drop = nn.Dropout(0.5,inplace=True)
+            self.backbone = timm.models.regnetx_064(pretrained=True,num_classes=50)
+        # self.classifier = nn.Linear(1000, num_classes)
+        # self.drop = nn.Dropout(0.5,inplace=True)
     def forward(self, x):
         x = self.backbone(x)
-        x = self.drop(x)
-        x = self.classifier(x)
+        # x = self.drop(x)
+        # x = self.classifier(x)
         return x
 
 def sigmoid_focal_loss(
@@ -160,7 +160,7 @@ class CustomDataset(Dataset):
 def competition_metric(true,pred):
     return f1_score(true,pred,average='macro')
 
-def validation(model, criterion,test_loader, device):
+def validation(model,test_loader,criterion, device,classes):
     model.eval()
 
     model_preds = []
@@ -174,7 +174,7 @@ def validation(model, criterion,test_loader, device):
 
             model_pred = model(img)
 
-            loss = criterion(model_pred, label)
+            loss = criterion(model_pred, label,classes)
 
             val_loss.append(loss.item())
             model_preds += model_pred.argmax(1).detach().cpu().numpy().tolist()
@@ -182,7 +182,7 @@ def validation(model, criterion,test_loader, device):
     val_f1 = competition_metric(true_labels, model_preds)
     return np.mean(val_loss), val_f1
 
-def train(model, optimizer, train_loader, criterion,device):
+def train(model, optimizer, train_loader, criterion,scheduler,device,classes):
     model.train()
     train_loss = []
     for img , label in tqdm(iter(train_loader)):
@@ -191,20 +191,22 @@ def train(model, optimizer, train_loader, criterion,device):
 
         model_pred = model(img)
 
-        loss = criterion(model_pred, label)
+        loss = criterion(model_pred, label,classes)
 
         loss.backward()
         optimizer.step()
 
         train_loss.append(loss.item())
+    if scheduler is not None:
+        scheduler.step()
 
     tr_loss  = np.mean(np.array(train_loss))
 
     return tr_loss
 
-def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_transform=None,k=5):
+def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_transform=None,k=5,device='cpu'):
     print(f'Total Dataset : {all_images.shape}, {type(all_images)}')
-    skf = StratifiedKFold(n_splits=k)
+    skf = StratifiedKFold(n_splits=k,shuffle=True,random_state=opt.seed)
     total_history = []
     data_length = len(all_images)//k
     print(data_length)
@@ -231,14 +233,18 @@ def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_trans
         history = {'train_loss':[],'val_loss':[],'f1_score':[]}
         if opt.optim=='Adam':
             optimizer = torch.optim.Adam(model.parameters(),lr=opt.lr_rate)
+            # scheduler= torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.2)
+            scheduler = None
         else:
             optimizer = torch.optim.Adam(model.parameters(),lr=opt.lr_rate)
-        
-        criterion = sigmoid_focal_loss
-        for e in range(1,opt.epoch):
-            train_loss = train(model, optimizer, train_loader, criterion,device)
-            val_loss, f1_score = validation(model,optimizer,val_loader,device)
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=opt.lr_rate*0.01)
 
+        criterion = sigmoid_focal_loss
+        for e in range(1,opt.epochs):
+            train_loss = train(model, optimizer, train_loader, criterion,scheduler, device, class_info)
+            val_loss, f1_score = validation(model,val_loader, criterion,device, class_info)
+
+            print(f'{e} epochs - T_loss : {train_loss:.5f}, V_loss : {val_loss:.5f}, F1 : {f1_score:.3f}')
             history['train_loss'].append(train_loss)
             history['val_loss'].append(val_loss)
             history['f1_score'].append(f1_score)
@@ -249,7 +255,7 @@ def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_trans
                     'epoch': e,
                     'model_state_dict': model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
-                },f'./checkpoint/best_{c}_regnet_{val_loss:.4f}.pth')
+                },f'./checkpoint/best_{c}_regnet_{f1_score:.3f}.pth')
                 print('Model Saved')
             else:
                 early +=1
@@ -257,6 +263,7 @@ def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_trans
                     print('Early stopping')
                     break
         total_history.append(history)
+        c +=1
     return total_history
 
 def cut_data(df,number,class_info,seed):
@@ -265,6 +272,7 @@ def cut_data(df,number,class_info,seed):
         if class_info[i][1] > number:
             a = df[df['artist']==i]
             drop_index = list(a.sample(class_info[i][1]-number,random_state=seed)['id'])
+            class_info[i][1]=number
             print(f'{i} delete {len(drop_index)}')
             df.drop(index=drop_index,inplace=True,axis=0)
     print(f'ater data : {len(df)}')
@@ -302,9 +310,10 @@ if __name__=='__main__':
     parser.add_argument('--optim', type=str, choices=['Adam','SGD'],default='SGD', help='[Adam, SGD] choose one')
     parser.add_argument('--stop', type=int, default=10, help='Early stopping count')
     parser.add_argument('--max-data', type=int, default=200, help='Up to a few per class')
+    parser.add_argument('--device', type=int, choices=[0,1],default=0, help='choose 0 or 1 device')
     opt = parser.parse_args()
 
-    GPU_NUM = 0 # 원하는 GPU 번호 입력
+    GPU_NUM = opt.device # 원하는 GPU 번호 입력
     device = torch.device(f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
     torch.cuda.set_device(device) # change allocation of current GPU
     os.environ['CUDA_LAUNCH_BLOCKING']="1"
@@ -320,8 +329,6 @@ if __name__=='__main__':
     class_info , label_to_name = make_class_info(df,new_df)
     
     df = cut_data(df,opt.max_data,class_info,opt.seed)
-    # 데이터를 downsampling 했으므로 다시 update
-    class_info, label_to_name= make_class_info(df,new_df)
 
     train_transform = A.Compose([
         A.Resize(256, 256),
@@ -342,7 +349,7 @@ if __name__=='__main__':
         ToTensorV2()
     ])
     
-    result = kfold_train(df['img_path'], df['artist'],class_info,opt,train_transform,test_transform,k=opt.k)
+    result = kfold_train(df['img_path'], df['artist'],class_info,opt,train_transform,test_transform,k=opt.k,device=device)
     
     save_plot(result)
     
