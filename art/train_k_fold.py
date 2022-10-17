@@ -124,7 +124,7 @@ def make_class_info(df1,df2):
         for i in range(len(df2)):
             if df2.loc[i]['name'] == name:
                 classes[name].extend(df2.loc[i].iloc[1:])
-                classes[name] = tuple(classes[name])
+                classes[name] = classes[name]
     classes = OrderedDict(sorted(classes.items(), key = lambda t : t[1][1],reverse=True))
 
     return classes, convert_labels
@@ -232,9 +232,9 @@ def kfold_train(all_images, all_labels,class_info,opt,train_transform,test_trans
         early = 0
         history = {'train_loss':[],'val_loss':[],'f1_score':[]}
         if opt.optim=='Adam':
-            optimizer = torch.optim.Adam(model.parameters(),lr=opt.lr_rate)
-            # scheduler= torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.2)
-            scheduler = None
+            optimizer = torch.optim.AdamW(model.parameters(),lr=opt.lr_rate)
+            scheduler= torch.optim.lr_scheduler.StepLR(optimizer, step_size=9, gamma=0.1)
+            # scheduler = None
         else:
             optimizer = torch.optim.Adam(model.parameters(),lr=opt.lr_rate)
             scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=opt.lr_rate*0.01)
