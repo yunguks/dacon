@@ -24,3 +24,191 @@ ater data : 3823
 Total Dataset : (3823,), <class 'pandas.core.series.Series'>
 764
 1st Train
+1 epochs - T_loss : 0.02351, V_loss : 0.00959, F1 : 0.328
+Model Saved
+2 epochs - T_loss : 0.00850, V_loss : 0.00726, F1 : 0.508
+Model Saved
+3 epochs - T_loss : 0.00673, V_loss : 0.00595, F1 : 0.595
+Model Saved
+4 epochs - T_loss : 0.00559, V_loss : 0.00517, F1 : 0.643
+Model Saved
+5 epochs - T_loss : 0.00466, V_loss : 0.00487, F1 : 0.651
+Model Saved
+6 epochs - T_loss : 0.00407, V_loss : 0.00455, F1 : 0.698
+Model Saved
+7 epochs - T_loss : 0.00352, V_loss : 0.00438, F1 : 0.714
+Model Saved
+8 epochs - T_loss : 0.00300, V_loss : 0.00427, F1 : 0.721
+Model Saved
+9 epochs - T_loss : 0.00274, V_loss : 0.00402, F1 : 0.728
+Model Saved
+10 epochs - T_loss : 0.00225, V_loss : 0.00392, F1 : 0.741
+Model Saved
+11 epochs - T_loss : 0.00212, V_loss : 0.00395, F1 : 0.748
+12 epochs - T_loss : 0.00207, V_loss : 0.00411, F1 : 0.723
+13 epochs - T_loss : 0.00195, V_loss : 0.00400, F1 : 0.743
+14 epochs - T_loss : 0.00188, V_loss : 0.00394, F1 : 0.747
+15 epochs - T_loss : 0.00187, V_loss : 0.00387, F1 : 0.750
+Model Saved
+16 epochs - T_loss : 0.00186, V_loss : 0.00386, F1 : 0.757
+Model Saved
+17 epochs - T_loss : 0.00187, V_loss : 0.00387, F1 : 0.759
+18 epochs - T_loss : 0.00176, V_loss : 0.00395, F1 : 0.740
+19 epochs - T_loss : 0.00171, V_loss : 0.00391, F1 : 0.754
+20 epochs - T_loss : 0.00171, V_loss : 0.00395, F1 : 0.750
+21 epochs - T_loss : 0.00170, V_loss : 0.00395, F1 : 0.757
+22 epochs - T_loss : 0.00168, V_loss : 0.00388, F1 : 0.751
+23 epochs - T_loss : 0.00164, V_loss : 0.00377, F1 : 0.760
+Model Saved
+24 epochs - T_loss : 0.00182, V_loss : 0.00386, F1 : 0.768
+Early stopping
+2st Train
+1 epochs - T_loss : 0.02388, V_loss : 0.00950, F1 : 0.319
+Model Saved
+2 epochs - T_loss : 0.00860, V_loss : 0.00707, F1 : 0.505
+Model Saved
+3 epochs - T_loss : 0.00673, V_loss : 0.00576, F1 : 0.600
+Model Saved
+4 epochs - T_loss : 0.00562, V_loss : 0.00506, F1 : 0.662
+Model Saved
+5 epochs - T_loss : 0.00476, V_loss : 0.00453, F1 : 0.700
+Model Saved
+6 epochs - T_loss : 0.00425, V_loss : 0.00423, F1 : 0.715
+Model Saved
+7 epochs - T_loss : 0.00358, V_loss : 0.00428, F1 : 0.723
+8 epochs - T_loss : 0.00309, V_loss : 0.00420, F1 : 0.748
+Model Saved
+9 epochs - T_loss : 0.00277, V_loss : 0.00394, F1 : 0.757
+Model Saved
+10 epochs - T_loss : 0.00228, V_loss : 0.00368, F1 : 0.766
+Model Saved
+11 epochs - T_loss : 0.00220, V_loss : 0.00370, F1 : 0.764
+12 epochs - T_loss : 0.00210, V_loss : 0.00379, F1 : 0.780
+13 epochs - T_loss : 0.00202, V_loss : 0.00361, F1 : 0.787
+Model Saved
+14 epochs - T_loss : 0.00197, V_loss : 0.00372, F1 : 0.766
+15 epochs - T_loss : 0.00195, V_loss : 0.00374, F1 : 0.775
+16 epochs - T_loss : 0.00187, V_loss : 0.00372, F1 : 0.762
+17 epochs - T_loss : 0.00187, V_loss : 0.00365, F1 : 0.778
+18 epochs - T_loss : 0.00173, V_loss : 0.00363, F1 : 0.782
+19 epochs - T_loss : 0.00176, V_loss : 0.00364, F1 : 0.779
+20 epochs - T_loss : 0.00172, V_loss : 0.00364, F1 : 0.783
+21 epochs - T_loss : 0.00176, V_loss : 0.00356, F1 : 0.777
+Model Saved
+22 epochs - T_loss : 0.00172, V_loss : 0.00361, F1 : 0.773
+Early stopping
+3st Train
+1 epochs - T_loss : 0.02349, V_loss : 0.00957, F1 : 0.349
+Model Saved
+2 epochs - T_loss : 0.00854, V_loss : 0.00710, F1 : 0.547
+Model Saved
+3 epochs - T_loss : 0.00675, V_loss : 0.00584, F1 : 0.608
+Model Saved
+4 epochs - T_loss : 0.00564, V_loss : 0.00499, F1 : 0.675
+Model Saved
+5 epochs - T_loss : 0.00475, V_loss : 0.00458, F1 : 0.698
+Model Saved
+6 epochs - T_loss : 0.00406, V_loss : 0.00431, F1 : 0.711
+Model Saved
+7 epochs - T_loss : 0.00354, V_loss : 0.00396, F1 : 0.748
+Model Saved
+8 epochs - T_loss : 0.00314, V_loss : 0.00389, F1 : 0.736
+Model Saved
+9 epochs - T_loss : 0.00268, V_loss : 0.00374, F1 : 0.749
+Model Saved
+10 epochs - T_loss : 0.00224, V_loss : 0.00368, F1 : 0.766
+Model Saved
+11 epochs - T_loss : 0.00210, V_loss : 0.00361, F1 : 0.765
+Model Saved
+12 epochs - T_loss : 0.00214, V_loss : 0.00361, F1 : 0.760
+13 epochs - T_loss : 0.00200, V_loss : 0.00351, F1 : 0.776
+Model Saved
+14 epochs - T_loss : 0.00197, V_loss : 0.00364, F1 : 0.761
+15 epochs - T_loss : 0.00196, V_loss : 0.00358, F1 : 0.761
+16 epochs - T_loss : 0.00185, V_loss : 0.00357, F1 : 0.786
+17 epochs - T_loss : 0.00181, V_loss : 0.00348, F1 : 0.779
+Model Saved
+18 epochs - T_loss : 0.00178, V_loss : 0.00355, F1 : 0.765
+19 epochs - T_loss : 0.00178, V_loss : 0.00365, F1 : 0.778
+20 epochs - T_loss : 0.00169, V_loss : 0.00358, F1 : 0.775
+21 epochs - T_loss : 0.00175, V_loss : 0.00350, F1 : 0.776
+22 epochs - T_loss : 0.00173, V_loss : 0.00353, F1 : 0.779
+23 epochs - T_loss : 0.00170, V_loss : 0.00361, F1 : 0.778
+24 epochs - T_loss : 0.00167, V_loss : 0.00355, F1 : 0.769
+Early stopping
+4st Train
+1 epochs - T_loss : 0.02196, V_loss : 0.00933, F1 : 0.338
+Model Saved
+2 epochs - T_loss : 0.00851, V_loss : 0.00693, F1 : 0.504
+Model Saved
+3 epochs - T_loss : 0.00666, V_loss : 0.00573, F1 : 0.613
+Model Saved
+4 epochs - T_loss : 0.00556, V_loss : 0.00501, F1 : 0.666
+Model Saved
+5 epochs - T_loss : 0.00465, V_loss : 0.00449, F1 : 0.703
+Model Saved
+6 epochs - T_loss : 0.00402, V_loss : 0.00417, F1 : 0.733
+Model Saved
+7 epochs - T_loss : 0.00340, V_loss : 0.00405, F1 : 0.734
+Model Saved
+8 epochs - T_loss : 0.00301, V_loss : 0.00390, F1 : 0.737
+Model Saved
+9 epochs - T_loss : 0.00261, V_loss : 0.00397, F1 : 0.760
+10 epochs - T_loss : 0.00216, V_loss : 0.00374, F1 : 0.756
+Model Saved
+11 epochs - T_loss : 0.00205, V_loss : 0.00386, F1 : 0.754
+12 epochs - T_loss : 0.00209, V_loss : 0.00367, F1 : 0.771
+Model Saved
+13 epochs - T_loss : 0.00189, V_loss : 0.00373, F1 : 0.767
+14 epochs - T_loss : 0.00194, V_loss : 0.00366, F1 : 0.767
+Model Saved
+15 epochs - T_loss : 0.00182, V_loss : 0.00370, F1 : 0.757
+16 epochs - T_loss : 0.00181, V_loss : 0.00376, F1 : 0.756
+17 epochs - T_loss : 0.00177, V_loss : 0.00378, F1 : 0.755
+18 epochs - T_loss : 0.00166, V_loss : 0.00381, F1 : 0.763
+19 epochs - T_loss : 0.00168, V_loss : 0.00369, F1 : 0.768
+20 epochs - T_loss : 0.00166, V_loss : 0.00373, F1 : 0.769
+21 epochs - T_loss : 0.00164, V_loss : 0.00363, F1 : 0.766
+Model Saved
+22 epochs - T_loss : 0.00168, V_loss : 0.00372, F1 : 0.767
+23 epochs - T_loss : 0.00164, V_loss : 0.00359, F1 : 0.771
+Model Saved
+24 epochs - T_loss : 0.00166, V_loss : 0.00364, F1 : 0.766
+Early stopping
+5st Train
+1 epochs - T_loss : 0.02481, V_loss : 0.00973, F1 : 0.322
+Model Saved
+2 epochs - T_loss : 0.00861, V_loss : 0.00736, F1 : 0.487
+Model Saved
+3 epochs - T_loss : 0.00677, V_loss : 0.00619, F1 : 0.569
+Model Saved
+4 epochs - T_loss : 0.00557, V_loss : 0.00548, F1 : 0.636
+Model Saved
+5 epochs - T_loss : 0.00482, V_loss : 0.00511, F1 : 0.646
+Model Saved
+6 epochs - T_loss : 0.00413, V_loss : 0.00466, F1 : 0.693
+Model Saved
+7 epochs - T_loss : 0.00363, V_loss : 0.00464, F1 : 0.708
+Model Saved
+8 epochs - T_loss : 0.00307, V_loss : 0.00467, F1 : 0.722
+9 epochs - T_loss : 0.00276, V_loss : 0.00446, F1 : 0.725
+Model Saved
+10 epochs - T_loss : 0.00234, V_loss : 0.00433, F1 : 0.726
+Model Saved
+11 epochs - T_loss : 0.00222, V_loss : 0.00415, F1 : 0.732
+Model Saved
+12 epochs - T_loss : 0.00219, V_loss : 0.00423, F1 : 0.737
+13 epochs - T_loss : 0.00208, V_loss : 0.00407, F1 : 0.735
+Model Saved
+14 epochs - T_loss : 0.00198, V_loss : 0.00413, F1 : 0.747
+15 epochs - T_loss : 0.00191, V_loss : 0.00408, F1 : 0.753
+16 epochs - T_loss : 0.00200, V_loss : 0.00411, F1 : 0.747
+17 epochs - T_loss : 0.00183, V_loss : 0.00418, F1 : 0.755
+18 epochs - T_loss : 0.00182, V_loss : 0.00408, F1 : 0.749
+19 epochs - T_loss : 0.00179, V_loss : 0.00420, F1 : 0.745
+20 epochs - T_loss : 0.00172, V_loss : 0.00411, F1 : 0.751
+21 epochs - T_loss : 0.00171, V_loss : 0.00404, F1 : 0.757
+Model Saved
+22 epochs - T_loss : 0.00170, V_loss : 0.00418, F1 : 0.751
+23 epochs - T_loss : 0.00173, V_loss : 0.00415, F1 : 0.750
+Early stopping
