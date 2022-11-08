@@ -1,214 +1,405 @@
-cuda:0
+cuda:1
 torch version : 1.12.1
 total data : 5911
-Vincent van Gogh delete 528
-Edgar Degas delete 388
-Pablo Picasso delete 202
-Pierre-Auguste Renoir delete 132
-Albrecht Du rer delete 119
-Paul Gauguin delete 119
-Francisco Goya delete 103
-Rembrandt delete 80
-Titian delete 72
-Marc Chagall delete 72
-Alfred Sisley delete 64
-Paul Klee delete 41
-Rene Magritte delete 36
-Andy Warhol delete 31
-Amedeo Modigliani delete 31
-Henri Matisse delete 20
-Sandro Botticelli delete 19
-Mikhail Vrubel delete 17
-Hieronymus Bosch delete 14
-ater data : 3823
-Total Dataset : (3823,), <class 'pandas.core.series.Series'>
-764
-1st Train
-1 epochs - T_loss : 0.02351, V_loss : 0.00959, F1 : 0.328
-Model Saved
-2 epochs - T_loss : 0.00850, V_loss : 0.00726, F1 : 0.508
-Model Saved
-3 epochs - T_loss : 0.00673, V_loss : 0.00595, F1 : 0.595
-Model Saved
-4 epochs - T_loss : 0.00559, V_loss : 0.00517, F1 : 0.643
-Model Saved
-5 epochs - T_loss : 0.00466, V_loss : 0.00487, F1 : 0.651
-Model Saved
-6 epochs - T_loss : 0.00407, V_loss : 0.00455, F1 : 0.698
-Model Saved
-7 epochs - T_loss : 0.00352, V_loss : 0.00438, F1 : 0.714
-Model Saved
-8 epochs - T_loss : 0.00300, V_loss : 0.00427, F1 : 0.721
-Model Saved
-9 epochs - T_loss : 0.00274, V_loss : 0.00402, F1 : 0.728
-Model Saved
-10 epochs - T_loss : 0.00225, V_loss : 0.00392, F1 : 0.741
-Model Saved
-11 epochs - T_loss : 0.00212, V_loss : 0.00395, F1 : 0.748
-12 epochs - T_loss : 0.00207, V_loss : 0.00411, F1 : 0.723
-13 epochs - T_loss : 0.00195, V_loss : 0.00400, F1 : 0.743
-14 epochs - T_loss : 0.00188, V_loss : 0.00394, F1 : 0.747
-15 epochs - T_loss : 0.00187, V_loss : 0.00387, F1 : 0.750
-Model Saved
-16 epochs - T_loss : 0.00186, V_loss : 0.00386, F1 : 0.757
-Model Saved
-17 epochs - T_loss : 0.00187, V_loss : 0.00387, F1 : 0.759
-18 epochs - T_loss : 0.00176, V_loss : 0.00395, F1 : 0.740
-19 epochs - T_loss : 0.00171, V_loss : 0.00391, F1 : 0.754
-20 epochs - T_loss : 0.00171, V_loss : 0.00395, F1 : 0.750
-21 epochs - T_loss : 0.00170, V_loss : 0.00395, F1 : 0.757
-22 epochs - T_loss : 0.00168, V_loss : 0.00388, F1 : 0.751
-23 epochs - T_loss : 0.00164, V_loss : 0.00377, F1 : 0.760
-Model Saved
-24 epochs - T_loss : 0.00182, V_loss : 0.00386, F1 : 0.768
-Early stopping
-2st Train
-1 epochs - T_loss : 0.02388, V_loss : 0.00950, F1 : 0.319
-Model Saved
-2 epochs - T_loss : 0.00860, V_loss : 0.00707, F1 : 0.505
-Model Saved
-3 epochs - T_loss : 0.00673, V_loss : 0.00576, F1 : 0.600
-Model Saved
-4 epochs - T_loss : 0.00562, V_loss : 0.00506, F1 : 0.662
-Model Saved
-5 epochs - T_loss : 0.00476, V_loss : 0.00453, F1 : 0.700
-Model Saved
-6 epochs - T_loss : 0.00425, V_loss : 0.00423, F1 : 0.715
-Model Saved
-7 epochs - T_loss : 0.00358, V_loss : 0.00428, F1 : 0.723
-8 epochs - T_loss : 0.00309, V_loss : 0.00420, F1 : 0.748
-Model Saved
-9 epochs - T_loss : 0.00277, V_loss : 0.00394, F1 : 0.757
-Model Saved
-10 epochs - T_loss : 0.00228, V_loss : 0.00368, F1 : 0.766
-Model Saved
-11 epochs - T_loss : 0.00220, V_loss : 0.00370, F1 : 0.764
-12 epochs - T_loss : 0.00210, V_loss : 0.00379, F1 : 0.780
-13 epochs - T_loss : 0.00202, V_loss : 0.00361, F1 : 0.787
-Model Saved
-14 epochs - T_loss : 0.00197, V_loss : 0.00372, F1 : 0.766
-15 epochs - T_loss : 0.00195, V_loss : 0.00374, F1 : 0.775
-16 epochs - T_loss : 0.00187, V_loss : 0.00372, F1 : 0.762
-17 epochs - T_loss : 0.00187, V_loss : 0.00365, F1 : 0.778
-18 epochs - T_loss : 0.00173, V_loss : 0.00363, F1 : 0.782
-19 epochs - T_loss : 0.00176, V_loss : 0.00364, F1 : 0.779
-20 epochs - T_loss : 0.00172, V_loss : 0.00364, F1 : 0.783
-21 epochs - T_loss : 0.00176, V_loss : 0.00356, F1 : 0.777
-Model Saved
-22 epochs - T_loss : 0.00172, V_loss : 0.00361, F1 : 0.773
-Early stopping
-3st Train
-1 epochs - T_loss : 0.02349, V_loss : 0.00957, F1 : 0.349
-Model Saved
-2 epochs - T_loss : 0.00854, V_loss : 0.00710, F1 : 0.547
-Model Saved
-3 epochs - T_loss : 0.00675, V_loss : 0.00584, F1 : 0.608
-Model Saved
-4 epochs - T_loss : 0.00564, V_loss : 0.00499, F1 : 0.675
-Model Saved
-5 epochs - T_loss : 0.00475, V_loss : 0.00458, F1 : 0.698
-Model Saved
-6 epochs - T_loss : 0.00406, V_loss : 0.00431, F1 : 0.711
-Model Saved
-7 epochs - T_loss : 0.00354, V_loss : 0.00396, F1 : 0.748
-Model Saved
-8 epochs - T_loss : 0.00314, V_loss : 0.00389, F1 : 0.736
-Model Saved
-9 epochs - T_loss : 0.00268, V_loss : 0.00374, F1 : 0.749
-Model Saved
-10 epochs - T_loss : 0.00224, V_loss : 0.00368, F1 : 0.766
-Model Saved
-11 epochs - T_loss : 0.00210, V_loss : 0.00361, F1 : 0.765
-Model Saved
-12 epochs - T_loss : 0.00214, V_loss : 0.00361, F1 : 0.760
-13 epochs - T_loss : 0.00200, V_loss : 0.00351, F1 : 0.776
-Model Saved
-14 epochs - T_loss : 0.00197, V_loss : 0.00364, F1 : 0.761
-15 epochs - T_loss : 0.00196, V_loss : 0.00358, F1 : 0.761
-16 epochs - T_loss : 0.00185, V_loss : 0.00357, F1 : 0.786
-17 epochs - T_loss : 0.00181, V_loss : 0.00348, F1 : 0.779
-Model Saved
-18 epochs - T_loss : 0.00178, V_loss : 0.00355, F1 : 0.765
-19 epochs - T_loss : 0.00178, V_loss : 0.00365, F1 : 0.778
-20 epochs - T_loss : 0.00169, V_loss : 0.00358, F1 : 0.775
-21 epochs - T_loss : 0.00175, V_loss : 0.00350, F1 : 0.776
-22 epochs - T_loss : 0.00173, V_loss : 0.00353, F1 : 0.779
-23 epochs - T_loss : 0.00170, V_loss : 0.00361, F1 : 0.778
-24 epochs - T_loss : 0.00167, V_loss : 0.00355, F1 : 0.769
-Early stopping
-4st Train
-1 epochs - T_loss : 0.02196, V_loss : 0.00933, F1 : 0.338
-Model Saved
-2 epochs - T_loss : 0.00851, V_loss : 0.00693, F1 : 0.504
-Model Saved
-3 epochs - T_loss : 0.00666, V_loss : 0.00573, F1 : 0.613
-Model Saved
-4 epochs - T_loss : 0.00556, V_loss : 0.00501, F1 : 0.666
-Model Saved
-5 epochs - T_loss : 0.00465, V_loss : 0.00449, F1 : 0.703
-Model Saved
-6 epochs - T_loss : 0.00402, V_loss : 0.00417, F1 : 0.733
-Model Saved
-7 epochs - T_loss : 0.00340, V_loss : 0.00405, F1 : 0.734
-Model Saved
-8 epochs - T_loss : 0.00301, V_loss : 0.00390, F1 : 0.737
-Model Saved
-9 epochs - T_loss : 0.00261, V_loss : 0.00397, F1 : 0.760
-10 epochs - T_loss : 0.00216, V_loss : 0.00374, F1 : 0.756
-Model Saved
-11 epochs - T_loss : 0.00205, V_loss : 0.00386, F1 : 0.754
-12 epochs - T_loss : 0.00209, V_loss : 0.00367, F1 : 0.771
-Model Saved
-13 epochs - T_loss : 0.00189, V_loss : 0.00373, F1 : 0.767
-14 epochs - T_loss : 0.00194, V_loss : 0.00366, F1 : 0.767
-Model Saved
-15 epochs - T_loss : 0.00182, V_loss : 0.00370, F1 : 0.757
-16 epochs - T_loss : 0.00181, V_loss : 0.00376, F1 : 0.756
-17 epochs - T_loss : 0.00177, V_loss : 0.00378, F1 : 0.755
-18 epochs - T_loss : 0.00166, V_loss : 0.00381, F1 : 0.763
-19 epochs - T_loss : 0.00168, V_loss : 0.00369, F1 : 0.768
-20 epochs - T_loss : 0.00166, V_loss : 0.00373, F1 : 0.769
-21 epochs - T_loss : 0.00164, V_loss : 0.00363, F1 : 0.766
-Model Saved
-22 epochs - T_loss : 0.00168, V_loss : 0.00372, F1 : 0.767
-23 epochs - T_loss : 0.00164, V_loss : 0.00359, F1 : 0.771
-Model Saved
-24 epochs - T_loss : 0.00166, V_loss : 0.00364, F1 : 0.766
-Early stopping
-5st Train
-1 epochs - T_loss : 0.02481, V_loss : 0.00973, F1 : 0.322
-Model Saved
-2 epochs - T_loss : 0.00861, V_loss : 0.00736, F1 : 0.487
-Model Saved
-3 epochs - T_loss : 0.00677, V_loss : 0.00619, F1 : 0.569
-Model Saved
-4 epochs - T_loss : 0.00557, V_loss : 0.00548, F1 : 0.636
-Model Saved
-5 epochs - T_loss : 0.00482, V_loss : 0.00511, F1 : 0.646
-Model Saved
-6 epochs - T_loss : 0.00413, V_loss : 0.00466, F1 : 0.693
-Model Saved
-7 epochs - T_loss : 0.00363, V_loss : 0.00464, F1 : 0.708
-Model Saved
-8 epochs - T_loss : 0.00307, V_loss : 0.00467, F1 : 0.722
-9 epochs - T_loss : 0.00276, V_loss : 0.00446, F1 : 0.725
-Model Saved
-10 epochs - T_loss : 0.00234, V_loss : 0.00433, F1 : 0.726
-Model Saved
-11 epochs - T_loss : 0.00222, V_loss : 0.00415, F1 : 0.732
-Model Saved
-12 epochs - T_loss : 0.00219, V_loss : 0.00423, F1 : 0.737
-13 epochs - T_loss : 0.00208, V_loss : 0.00407, F1 : 0.735
-Model Saved
-14 epochs - T_loss : 0.00198, V_loss : 0.00413, F1 : 0.747
-15 epochs - T_loss : 0.00191, V_loss : 0.00408, F1 : 0.753
-16 epochs - T_loss : 0.00200, V_loss : 0.00411, F1 : 0.747
-17 epochs - T_loss : 0.00183, V_loss : 0.00418, F1 : 0.755
-18 epochs - T_loss : 0.00182, V_loss : 0.00408, F1 : 0.749
-19 epochs - T_loss : 0.00179, V_loss : 0.00420, F1 : 0.745
-20 epochs - T_loss : 0.00172, V_loss : 0.00411, F1 : 0.751
-21 epochs - T_loss : 0.00171, V_loss : 0.00404, F1 : 0.757
-Model Saved
-22 epochs - T_loss : 0.00170, V_loss : 0.00418, F1 : 0.751
-23 epochs - T_loss : 0.00173, V_loss : 0.00415, F1 : 0.750
-Early stopping
+Vincent van Gogh delete 428
+Edgar Degas delete 288
+Pablo Picasso delete 102
+Pierre-Auguste Renoir delete 32
+Albrecht Du rer delete 19
+Paul Gauguin delete 19
+Francisco Goya delete 3
+ater data : 5020
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1           [-1, 96, 56, 56]           4,704
+           Permute-2           [-1, 56, 56, 96]               0
+         LayerNorm-3           [-1, 56, 56, 96]             192
+         LayerNorm-4           [-1, 56, 56, 96]             192
+ShiftedWindowAttention-5           [-1, 56, 56, 96]               0
+   StochasticDepth-6           [-1, 56, 56, 96]               0
+         LayerNorm-7           [-1, 56, 56, 96]             192
+            Linear-8          [-1, 56, 56, 384]          37,248
+              GELU-9          [-1, 56, 56, 384]               0
+          Dropout-10          [-1, 56, 56, 384]               0
+           Linear-11           [-1, 56, 56, 96]          36,960
+          Dropout-12           [-1, 56, 56, 96]               0
+  StochasticDepth-13           [-1, 56, 56, 96]               0
+SwinTransformerBlock-14           [-1, 56, 56, 96]               0
+        LayerNorm-15           [-1, 56, 56, 96]             192
+ShiftedWindowAttention-16           [-1, 56, 56, 96]               0
+  StochasticDepth-17           [-1, 56, 56, 96]               0
+        LayerNorm-18           [-1, 56, 56, 96]             192
+           Linear-19          [-1, 56, 56, 384]          37,248
+             GELU-20          [-1, 56, 56, 384]               0
+          Dropout-21          [-1, 56, 56, 384]               0
+           Linear-22           [-1, 56, 56, 96]          36,960
+          Dropout-23           [-1, 56, 56, 96]               0
+  StochasticDepth-24           [-1, 56, 56, 96]               0
+SwinTransformerBlock-25           [-1, 56, 56, 96]               0
+        LayerNorm-26          [-1, 28, 28, 384]             768
+           Linear-27          [-1, 28, 28, 192]          73,728
+     PatchMerging-28          [-1, 28, 28, 192]               0
+        LayerNorm-29          [-1, 28, 28, 192]             384
+ShiftedWindowAttention-30          [-1, 28, 28, 192]               0
+  StochasticDepth-31          [-1, 28, 28, 192]               0
+        LayerNorm-32          [-1, 28, 28, 192]             384
+           Linear-33          [-1, 28, 28, 768]         148,224
+             GELU-34          [-1, 28, 28, 768]               0
+          Dropout-35          [-1, 28, 28, 768]               0
+           Linear-36          [-1, 28, 28, 192]         147,648
+          Dropout-37          [-1, 28, 28, 192]               0
+  StochasticDepth-38          [-1, 28, 28, 192]               0
+SwinTransformerBlock-39          [-1, 28, 28, 192]               0
+        LayerNorm-40          [-1, 28, 28, 192]             384
+ShiftedWindowAttention-41          [-1, 28, 28, 192]               0
+  StochasticDepth-42          [-1, 28, 28, 192]               0
+        LayerNorm-43          [-1, 28, 28, 192]             384
+           Linear-44          [-1, 28, 28, 768]         148,224
+             GELU-45          [-1, 28, 28, 768]               0
+          Dropout-46          [-1, 28, 28, 768]               0
+           Linear-47          [-1, 28, 28, 192]         147,648
+          Dropout-48          [-1, 28, 28, 192]               0
+  StochasticDepth-49          [-1, 28, 28, 192]               0
+SwinTransformerBlock-50          [-1, 28, 28, 192]               0
+        LayerNorm-51          [-1, 14, 14, 768]           1,536
+           Linear-52          [-1, 14, 14, 384]         294,912
+     PatchMerging-53          [-1, 14, 14, 384]               0
+        LayerNorm-54          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-55          [-1, 14, 14, 384]               0
+  StochasticDepth-56          [-1, 14, 14, 384]               0
+        LayerNorm-57          [-1, 14, 14, 384]             768
+           Linear-58         [-1, 14, 14, 1536]         591,360
+             GELU-59         [-1, 14, 14, 1536]               0
+          Dropout-60         [-1, 14, 14, 1536]               0
+           Linear-61          [-1, 14, 14, 384]         590,208
+          Dropout-62          [-1, 14, 14, 384]               0
+  StochasticDepth-63          [-1, 14, 14, 384]               0
+SwinTransformerBlock-64          [-1, 14, 14, 384]               0
+        LayerNorm-65          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-66          [-1, 14, 14, 384]               0
+  StochasticDepth-67          [-1, 14, 14, 384]               0
+        LayerNorm-68          [-1, 14, 14, 384]             768
+           Linear-69         [-1, 14, 14, 1536]         591,360
+             GELU-70         [-1, 14, 14, 1536]               0
+          Dropout-71         [-1, 14, 14, 1536]               0
+           Linear-72          [-1, 14, 14, 384]         590,208
+          Dropout-73          [-1, 14, 14, 384]               0
+  StochasticDepth-74          [-1, 14, 14, 384]               0
+SwinTransformerBlock-75          [-1, 14, 14, 384]               0
+        LayerNorm-76          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-77          [-1, 14, 14, 384]               0
+  StochasticDepth-78          [-1, 14, 14, 384]               0
+        LayerNorm-79          [-1, 14, 14, 384]             768
+           Linear-80         [-1, 14, 14, 1536]         591,360
+             GELU-81         [-1, 14, 14, 1536]               0
+          Dropout-82         [-1, 14, 14, 1536]               0
+           Linear-83          [-1, 14, 14, 384]         590,208
+          Dropout-84          [-1, 14, 14, 384]               0
+  StochasticDepth-85          [-1, 14, 14, 384]               0
+SwinTransformerBlock-86          [-1, 14, 14, 384]               0
+        LayerNorm-87          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-88          [-1, 14, 14, 384]               0
+  StochasticDepth-89          [-1, 14, 14, 384]               0
+        LayerNorm-90          [-1, 14, 14, 384]             768
+           Linear-91         [-1, 14, 14, 1536]         591,360
+             GELU-92         [-1, 14, 14, 1536]               0
+          Dropout-93         [-1, 14, 14, 1536]               0
+           Linear-94          [-1, 14, 14, 384]         590,208
+          Dropout-95          [-1, 14, 14, 384]               0
+  StochasticDepth-96          [-1, 14, 14, 384]               0
+SwinTransformerBlock-97          [-1, 14, 14, 384]               0
+        LayerNorm-98          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-99          [-1, 14, 14, 384]               0
+ StochasticDepth-100          [-1, 14, 14, 384]               0
+       LayerNorm-101          [-1, 14, 14, 384]             768
+          Linear-102         [-1, 14, 14, 1536]         591,360
+            GELU-103         [-1, 14, 14, 1536]               0
+         Dropout-104         [-1, 14, 14, 1536]               0
+          Linear-105          [-1, 14, 14, 384]         590,208
+         Dropout-106          [-1, 14, 14, 384]               0
+ StochasticDepth-107          [-1, 14, 14, 384]               0
+SwinTransformerBlock-108          [-1, 14, 14, 384]               0
+       LayerNorm-109          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-110          [-1, 14, 14, 384]               0
+ StochasticDepth-111          [-1, 14, 14, 384]               0
+       LayerNorm-112          [-1, 14, 14, 384]             768
+          Linear-113         [-1, 14, 14, 1536]         591,360
+            GELU-114         [-1, 14, 14, 1536]               0
+         Dropout-115         [-1, 14, 14, 1536]               0
+          Linear-116          [-1, 14, 14, 384]         590,208
+         Dropout-117          [-1, 14, 14, 384]               0
+ StochasticDepth-118          [-1, 14, 14, 384]               0
+SwinTransformerBlock-119          [-1, 14, 14, 384]               0
+       LayerNorm-120          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-121          [-1, 14, 14, 384]               0
+ StochasticDepth-122          [-1, 14, 14, 384]               0
+       LayerNorm-123          [-1, 14, 14, 384]             768
+          Linear-124         [-1, 14, 14, 1536]         591,360
+            GELU-125         [-1, 14, 14, 1536]               0
+         Dropout-126         [-1, 14, 14, 1536]               0
+          Linear-127          [-1, 14, 14, 384]         590,208
+         Dropout-128          [-1, 14, 14, 384]               0
+ StochasticDepth-129          [-1, 14, 14, 384]               0
+SwinTransformerBlock-130          [-1, 14, 14, 384]               0
+       LayerNorm-131          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-132          [-1, 14, 14, 384]               0
+ StochasticDepth-133          [-1, 14, 14, 384]               0
+       LayerNorm-134          [-1, 14, 14, 384]             768
+          Linear-135         [-1, 14, 14, 1536]         591,360
+            GELU-136         [-1, 14, 14, 1536]               0
+         Dropout-137         [-1, 14, 14, 1536]               0
+          Linear-138          [-1, 14, 14, 384]         590,208
+         Dropout-139          [-1, 14, 14, 384]               0
+ StochasticDepth-140          [-1, 14, 14, 384]               0
+SwinTransformerBlock-141          [-1, 14, 14, 384]               0
+       LayerNorm-142          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-143          [-1, 14, 14, 384]               0
+ StochasticDepth-144          [-1, 14, 14, 384]               0
+       LayerNorm-145          [-1, 14, 14, 384]             768
+          Linear-146         [-1, 14, 14, 1536]         591,360
+            GELU-147         [-1, 14, 14, 1536]               0
+         Dropout-148         [-1, 14, 14, 1536]               0
+          Linear-149          [-1, 14, 14, 384]         590,208
+         Dropout-150          [-1, 14, 14, 384]               0
+ StochasticDepth-151          [-1, 14, 14, 384]               0
+SwinTransformerBlock-152          [-1, 14, 14, 384]               0
+       LayerNorm-153          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-154          [-1, 14, 14, 384]               0
+ StochasticDepth-155          [-1, 14, 14, 384]               0
+       LayerNorm-156          [-1, 14, 14, 384]             768
+          Linear-157         [-1, 14, 14, 1536]         591,360
+            GELU-158         [-1, 14, 14, 1536]               0
+         Dropout-159         [-1, 14, 14, 1536]               0
+          Linear-160          [-1, 14, 14, 384]         590,208
+         Dropout-161          [-1, 14, 14, 384]               0
+ StochasticDepth-162          [-1, 14, 14, 384]               0
+SwinTransformerBlock-163          [-1, 14, 14, 384]               0
+       LayerNorm-164          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-165          [-1, 14, 14, 384]               0
+ StochasticDepth-166          [-1, 14, 14, 384]               0
+       LayerNorm-167          [-1, 14, 14, 384]             768
+          Linear-168         [-1, 14, 14, 1536]         591,360
+            GELU-169         [-1, 14, 14, 1536]               0
+         Dropout-170         [-1, 14, 14, 1536]               0
+          Linear-171          [-1, 14, 14, 384]         590,208
+         Dropout-172          [-1, 14, 14, 384]               0
+ StochasticDepth-173          [-1, 14, 14, 384]               0
+SwinTransformerBlock-174          [-1, 14, 14, 384]               0
+       LayerNorm-175          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-176          [-1, 14, 14, 384]               0
+ StochasticDepth-177          [-1, 14, 14, 384]               0
+       LayerNorm-178          [-1, 14, 14, 384]             768
+          Linear-179         [-1, 14, 14, 1536]         591,360
+            GELU-180         [-1, 14, 14, 1536]               0
+         Dropout-181         [-1, 14, 14, 1536]               0
+          Linear-182          [-1, 14, 14, 384]         590,208
+         Dropout-183          [-1, 14, 14, 384]               0
+ StochasticDepth-184          [-1, 14, 14, 384]               0
+SwinTransformerBlock-185          [-1, 14, 14, 384]               0
+       LayerNorm-186          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-187          [-1, 14, 14, 384]               0
+ StochasticDepth-188          [-1, 14, 14, 384]               0
+       LayerNorm-189          [-1, 14, 14, 384]             768
+          Linear-190         [-1, 14, 14, 1536]         591,360
+            GELU-191         [-1, 14, 14, 1536]               0
+         Dropout-192         [-1, 14, 14, 1536]               0
+          Linear-193          [-1, 14, 14, 384]         590,208
+         Dropout-194          [-1, 14, 14, 384]               0
+ StochasticDepth-195          [-1, 14, 14, 384]               0
+SwinTransformerBlock-196          [-1, 14, 14, 384]               0
+       LayerNorm-197          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-198          [-1, 14, 14, 384]               0
+ StochasticDepth-199          [-1, 14, 14, 384]               0
+       LayerNorm-200          [-1, 14, 14, 384]             768
+          Linear-201         [-1, 14, 14, 1536]         591,360
+            GELU-202         [-1, 14, 14, 1536]               0
+         Dropout-203         [-1, 14, 14, 1536]               0
+          Linear-204          [-1, 14, 14, 384]         590,208
+         Dropout-205          [-1, 14, 14, 384]               0
+ StochasticDepth-206          [-1, 14, 14, 384]               0
+SwinTransformerBlock-207          [-1, 14, 14, 384]               0
+       LayerNorm-208          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-209          [-1, 14, 14, 384]               0
+ StochasticDepth-210          [-1, 14, 14, 384]               0
+       LayerNorm-211          [-1, 14, 14, 384]             768
+          Linear-212         [-1, 14, 14, 1536]         591,360
+            GELU-213         [-1, 14, 14, 1536]               0
+         Dropout-214         [-1, 14, 14, 1536]               0
+          Linear-215          [-1, 14, 14, 384]         590,208
+         Dropout-216          [-1, 14, 14, 384]               0
+ StochasticDepth-217          [-1, 14, 14, 384]               0
+SwinTransformerBlock-218          [-1, 14, 14, 384]               0
+       LayerNorm-219          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-220          [-1, 14, 14, 384]               0
+ StochasticDepth-221          [-1, 14, 14, 384]               0
+       LayerNorm-222          [-1, 14, 14, 384]             768
+          Linear-223         [-1, 14, 14, 1536]         591,360
+            GELU-224         [-1, 14, 14, 1536]               0
+         Dropout-225         [-1, 14, 14, 1536]               0
+          Linear-226          [-1, 14, 14, 384]         590,208
+         Dropout-227          [-1, 14, 14, 384]               0
+ StochasticDepth-228          [-1, 14, 14, 384]               0
+SwinTransformerBlock-229          [-1, 14, 14, 384]               0
+       LayerNorm-230          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-231          [-1, 14, 14, 384]               0
+ StochasticDepth-232          [-1, 14, 14, 384]               0
+       LayerNorm-233          [-1, 14, 14, 384]             768
+          Linear-234         [-1, 14, 14, 1536]         591,360
+            GELU-235         [-1, 14, 14, 1536]               0
+         Dropout-236         [-1, 14, 14, 1536]               0
+          Linear-237          [-1, 14, 14, 384]         590,208
+         Dropout-238          [-1, 14, 14, 384]               0
+ StochasticDepth-239          [-1, 14, 14, 384]               0
+SwinTransformerBlock-240          [-1, 14, 14, 384]               0
+       LayerNorm-241          [-1, 14, 14, 384]             768
+ShiftedWindowAttention-242          [-1, 14, 14, 384]               0
+ StochasticDepth-243          [-1, 14, 14, 384]               0
+       LayerNorm-244          [-1, 14, 14, 384]             768
+          Linear-245         [-1, 14, 14, 1536]         591,360
+            GELU-246         [-1, 14, 14, 1536]               0
+         Dropout-247         [-1, 14, 14, 1536]               0
+          Linear-248          [-1, 14, 14, 384]         590,208
+         Dropout-249          [-1, 14, 14, 384]               0
+ StochasticDepth-250          [-1, 14, 14, 384]               0
+SwinTransformerBlock-251          [-1, 14, 14, 384]               0
+       LayerNorm-252           [-1, 7, 7, 1536]           3,072
+          Linear-253            [-1, 7, 7, 768]       1,179,648
+    PatchMerging-254            [-1, 7, 7, 768]               0
+       LayerNorm-255            [-1, 7, 7, 768]           1,536
+ShiftedWindowAttention-256            [-1, 7, 7, 768]               0
+ StochasticDepth-257            [-1, 7, 7, 768]               0
+       LayerNorm-258            [-1, 7, 7, 768]           1,536
+          Linear-259           [-1, 7, 7, 3072]       2,362,368
+            GELU-260           [-1, 7, 7, 3072]               0
+         Dropout-261           [-1, 7, 7, 3072]               0
+          Linear-262            [-1, 7, 7, 768]       2,360,064
+         Dropout-263            [-1, 7, 7, 768]               0
+ StochasticDepth-264            [-1, 7, 7, 768]               0
+SwinTransformerBlock-265            [-1, 7, 7, 768]               0
+       LayerNorm-266            [-1, 7, 7, 768]           1,536
+ShiftedWindowAttention-267            [-1, 7, 7, 768]               0
+ StochasticDepth-268            [-1, 7, 7, 768]               0
+       LayerNorm-269            [-1, 7, 7, 768]           1,536
+          Linear-270           [-1, 7, 7, 3072]       2,362,368
+            GELU-271           [-1, 7, 7, 3072]               0
+         Dropout-272           [-1, 7, 7, 3072]               0
+          Linear-273            [-1, 7, 7, 768]       2,360,064
+         Dropout-274            [-1, 7, 7, 768]               0
+ StochasticDepth-275            [-1, 7, 7, 768]               0
+SwinTransformerBlock-276            [-1, 7, 7, 768]               0
+       LayerNorm-277            [-1, 7, 7, 768]           1,536
+AdaptiveAvgPool2d-278            [-1, 768, 1, 1]               0
+          Linear-279                 [-1, 1000]         769,000
+ SwinTransformer-280                 [-1, 1000]               0
+         Dropout-281                 [-1, 1000]               0
+          Linear-282                   [-1, 50]          50,050
+================================================================
+Total params: 33,868,490
+Trainable params: 33,868,490
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.57
+Forward/backward pass size (MB): 371.26
+Params size (MB): 129.20
+Estimated Total Size (MB): 501.03
+----------------------------------------------------------------
+Epoch [1], Train Loss : 0.01097, Val Loss : 0.00600, Val F1 Score : 0.02538
+Epoch [2], Train Loss : 0.00651, Val Loss : 0.00591, Val F1 Score : 0.03176
+Epoch [3], Train Loss : 0.00634, Val Loss : 0.00577, Val F1 Score : 0.03735
+Epoch [4], Train Loss : 0.00623, Val Loss : 0.00571, Val F1 Score : 0.04063
+Epoch [5], Train Loss : 0.00616, Val Loss : 0.00563, Val F1 Score : 0.03868
+Epoch [6], Train Loss : 0.00605, Val Loss : 0.00556, Val F1 Score : 0.04869
+Epoch [7], Train Loss : 0.00595, Val Loss : 0.00551, Val F1 Score : 0.04987
+Epoch [8], Train Loss : 0.00590, Val Loss : 0.00545, Val F1 Score : 0.05069
+Epoch [9], Train Loss : 0.00583, Val Loss : 0.00538, Val F1 Score : 0.05596
+Epoch [10], Train Loss : 0.00575, Val Loss : 0.00532, Val F1 Score : 0.06150
+Epoch [11], Train Loss : 0.00572, Val Loss : 0.00529, Val F1 Score : 0.06870
+Epoch [12], Train Loss : 0.00567, Val Loss : 0.00523, Val F1 Score : 0.07818
+Epoch [13], Train Loss : 0.00561, Val Loss : 0.00518, Val F1 Score : 0.07572
+Epoch [14], Train Loss : 0.00552, Val Loss : 0.00513, Val F1 Score : 0.08604
+Epoch [15], Train Loss : 0.00548, Val Loss : 0.00509, Val F1 Score : 0.09184
+Epoch [16], Train Loss : 0.00548, Val Loss : 0.00502, Val F1 Score : 0.10473
+Epoch [17], Train Loss : 0.00541, Val Loss : 0.00500, Val F1 Score : 0.10600
+Epoch [18], Train Loss : 0.00534, Val Loss : 0.00495, Val F1 Score : 0.11235
+Epoch [19], Train Loss : 0.00532, Val Loss : 0.00494, Val F1 Score : 0.11428
+Epoch [20], Train Loss : 0.00527, Val Loss : 0.00490, Val F1 Score : 0.13962
+Epoch [21], Train Loss : 0.00526, Val Loss : 0.00485, Val F1 Score : 0.13421
+Epoch [22], Train Loss : 0.00518, Val Loss : 0.00484, Val F1 Score : 0.13413
+Epoch [23], Train Loss : 0.00518, Val Loss : 0.00480, Val F1 Score : 0.13615
+Epoch [24], Train Loss : 0.00516, Val Loss : 0.00478, Val F1 Score : 0.14968
+Epoch [25], Train Loss : 0.00513, Val Loss : 0.00474, Val F1 Score : 0.16049
+Epoch [26], Train Loss : 0.00514, Val Loss : 0.00473, Val F1 Score : 0.15583
+Epoch [27], Train Loss : 0.00507, Val Loss : 0.00471, Val F1 Score : 0.17100
+Epoch [28], Train Loss : 0.00506, Val Loss : 0.00468, Val F1 Score : 0.17401
+Epoch [29], Train Loss : 0.00505, Val Loss : 0.00467, Val F1 Score : 0.16977
+Epoch [30], Train Loss : 0.00502, Val Loss : 0.00466, Val F1 Score : 0.17448
+Epoch [31], Train Loss : 0.00501, Val Loss : 0.00465, Val F1 Score : 0.18587
+Epoch [32], Train Loss : 0.00498, Val Loss : 0.00462, Val F1 Score : 0.18229
+Epoch [33], Train Loss : 0.00499, Val Loss : 0.00461, Val F1 Score : 0.17844
+Epoch [34], Train Loss : 0.00495, Val Loss : 0.00461, Val F1 Score : 0.18202
+Epoch [35], Train Loss : 0.00496, Val Loss : 0.00460, Val F1 Score : 0.18966
+Epoch [36], Train Loss : 0.00493, Val Loss : 0.00458, Val F1 Score : 0.19439
+Epoch [37], Train Loss : 0.00493, Val Loss : 0.00458, Val F1 Score : 0.19717
+Epoch [38], Train Loss : 0.00489, Val Loss : 0.00457, Val F1 Score : 0.19740
+Epoch [39], Train Loss : 0.00492, Val Loss : 0.00456, Val F1 Score : 0.19596
+Epoch [40], Train Loss : 0.00490, Val Loss : 0.00456, Val F1 Score : 0.20004
+Epoch [41], Train Loss : 0.00490, Val Loss : 0.00456, Val F1 Score : 0.19780
+Epoch [42], Train Loss : 0.00490, Val Loss : 0.00455, Val F1 Score : 0.19900
+Epoch [43], Train Loss : 0.00489, Val Loss : 0.00455, Val F1 Score : 0.20352
+Epoch [44], Train Loss : 0.00488, Val Loss : 0.00455, Val F1 Score : 0.20493
+Epoch [45], Train Loss : 0.00488, Val Loss : 0.00455, Val F1 Score : 0.20732
+Epoch [46], Train Loss : 0.00489, Val Loss : 0.00455, Val F1 Score : 0.20637
+Epoch [47], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20640
+Epoch [48], Train Loss : 0.00490, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [49], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [50], Train Loss : 0.00489, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [51], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [52], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [53], Train Loss : 0.00488, Val Loss : 0.00454, Val F1 Score : 0.20614
+Epoch [54], Train Loss : 0.00486, Val Loss : 0.00454, Val F1 Score : 0.20689
+Epoch [55], Train Loss : 0.00488, Val Loss : 0.00454, Val F1 Score : 0.20605
+Epoch [56], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20602
+Epoch [57], Train Loss : 0.00488, Val Loss : 0.00454, Val F1 Score : 0.20669
+Epoch [58], Train Loss : 0.00487, Val Loss : 0.00454, Val F1 Score : 0.20816
+Epoch [59], Train Loss : 0.00487, Val Loss : 0.00453, Val F1 Score : 0.20459
+Epoch [60], Train Loss : 0.00486, Val Loss : 0.00453, Val F1 Score : 0.20862
+Epoch [61], Train Loss : 0.00486, Val Loss : 0.00453, Val F1 Score : 0.20854
+Epoch [62], Train Loss : 0.00486, Val Loss : 0.00452, Val F1 Score : 0.20741
+Epoch [63], Train Loss : 0.00484, Val Loss : 0.00452, Val F1 Score : 0.21100
+Epoch [64], Train Loss : 0.00488, Val Loss : 0.00451, Val F1 Score : 0.21274
+Epoch [65], Train Loss : 0.00484, Val Loss : 0.00451, Val F1 Score : 0.21118
+Epoch [66], Train Loss : 0.00482, Val Loss : 0.00450, Val F1 Score : 0.21138
+Epoch [67], Train Loss : 0.00483, Val Loss : 0.00449, Val F1 Score : 0.21506
+Epoch [68], Train Loss : 0.00483, Val Loss : 0.00447, Val F1 Score : 0.21335
+Epoch [69], Train Loss : 0.00483, Val Loss : 0.00446, Val F1 Score : 0.22332
+Epoch [70], Train Loss : 0.00479, Val Loss : 0.00445, Val F1 Score : 0.22088
+Epoch [71], Train Loss : 0.00480, Val Loss : 0.00445, Val F1 Score : 0.22033
+Epoch [72], Train Loss : 0.00478, Val Loss : 0.00442, Val F1 Score : 0.23012
+Epoch [73], Train Loss : 0.00475, Val Loss : 0.00442, Val F1 Score : 0.22667
+Epoch [74], Train Loss : 0.00474, Val Loss : 0.00440, Val F1 Score : 0.24014
+Epoch [75], Train Loss : 0.00473, Val Loss : 0.00438, Val F1 Score : 0.23425
+Epoch [76], Train Loss : 0.00470, Val Loss : 0.00435, Val F1 Score : 0.23876
+Epoch [77], Train Loss : 0.00465, Val Loss : 0.00433, Val F1 Score : 0.24019
+Epoch [78], Train Loss : 0.00468, Val Loss : 0.00432, Val F1 Score : 0.25010
+Epoch [79], Train Loss : 0.00463, Val Loss : 0.00432, Val F1 Score : 0.24184
+Epoch [80], Train Loss : 0.00460, Val Loss : 0.00427, Val F1 Score : 0.26807
+Epoch [81], Train Loss : 0.00457, Val Loss : 0.00424, Val F1 Score : 0.26819
+Epoch [82], Train Loss : 0.00453, Val Loss : 0.00422, Val F1 Score : 0.26123
+Epoch [83], Train Loss : 0.00454, Val Loss : 0.00418, Val F1 Score : 0.28270
+Epoch [84], Train Loss : 0.00452, Val Loss : 0.00416, Val F1 Score : 0.27825
+Epoch [85], Train Loss : 0.00450, Val Loss : 0.00414, Val F1 Score : 0.28789
+Epoch [86], Train Loss : 0.00443, Val Loss : 0.00409, Val F1 Score : 0.29515
+Epoch [87], Train Loss : 0.00438, Val Loss : 0.00407, Val F1 Score : 0.28974
+Epoch [88], Train Loss : 0.00439, Val Loss : 0.00402, Val F1 Score : 0.31298
+Epoch [89], Train Loss : 0.00437, Val Loss : 0.00401, Val F1 Score : 0.31004
+Epoch [90], Train Loss : 0.00430, Val Loss : 0.00395, Val F1 Score : 0.33676
+Epoch [91], Train Loss : 0.00427, Val Loss : 0.00394, Val F1 Score : 0.34640
+Epoch [92], Train Loss : 0.00423, Val Loss : 0.00390, Val F1 Score : 0.35757
+Epoch [93], Train Loss : 0.00421, Val Loss : 0.00387, Val F1 Score : 0.35886
+Epoch [94], Train Loss : 0.00418, Val Loss : 0.00381, Val F1 Score : 0.35559
+Epoch [95], Train Loss : 0.00417, Val Loss : 0.00376, Val F1 Score : 0.37421
+Epoch [96], Train Loss : 0.00412, Val Loss : 0.00376, Val F1 Score : 0.38634
+Epoch [97], Train Loss : 0.00408, Val Loss : 0.00373, Val F1 Score : 0.37794
+Epoch [98], Train Loss : 0.00402, Val Loss : 0.00371, Val F1 Score : 0.38981
+Epoch [99], Train Loss : 0.00403, Val Loss : 0.00367, Val F1 Score : 0.38893
