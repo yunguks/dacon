@@ -374,7 +374,11 @@ def validation(model, criterion,test_loader, device):
     return np.mean(val_loss), val_f1
 
 # optimizer = torch.optim.Adam(params=model.parameters(), lr = 6e-5)
-optimizer = torch.optim.SGD(params=model.parameters(), lr=1e-2,momentum=0.9)
+lr = 1e-2
+optimizer = torch.optim.SGD(params=[
+    {'params':model.backbone.parameters(), 'lr':0.1*lr},
+    {'params':model.classifier.parameters(), 'lr':lr}
+    ], lr=1e-2,momentum=0.9)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer,T_max=50,eta_min=1e-5)
 # scheduler = None
 
