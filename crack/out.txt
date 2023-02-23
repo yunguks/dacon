@@ -1,0 +1,2 @@
+Namespace(device=0, crash=True, lr=0.001, seed=42, epoch=200, kfold=3, img=224, batch=8, length=50, save_name=None)
+Epoch [1], Train Loss : [6.20488] Val Loss : [1.68894] Val F1 : [0.25373]
