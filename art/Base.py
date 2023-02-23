@@ -70,7 +70,6 @@ for name in classes.keys():
             classes[name].extend(new_df.loc[i].iloc[1:])
             classes[name] = classes[name]
 classes = OrderedDict(sorted(classes.items(), key = lambda t : t[1][1],reverse=True))
-
 def cut_data(df,number,class_info,seed):
     print(f'total data : {len(df)}')
     for i in class_info:
@@ -84,6 +83,7 @@ def cut_data(df,number,class_info,seed):
     return df 
 
 df = cut_data(df,200,classes,41)
+print(classes)
 
 train_df,val_df,_, _ = train_test_split(df, df['artist'].values, test_size=0.2, shuffle=True,random_state=CFG['SEED'])
 
@@ -178,7 +178,7 @@ class BaseModel(nn.Module):
         return x
 import torchsummary
 model = BaseModel()
-torchsummary.summary(model, (3,224,224),device='cpu')
+# torchsummary.summary(model, (3,224,224),device='cpu')
 
 #pytorch 참고
 def sigmoid_focal_loss(
@@ -374,12 +374,12 @@ def validation(model, criterion,test_loader, device):
     return np.mean(val_loss), val_f1
 
 # optimizer = torch.optim.Adam(params=model.parameters(), lr = 6e-5)
-lr = 1e-2
+lr = 1e-3
 optimizer = torch.optim.SGD(params=[
     {'params':model.backbone.parameters(), 'lr':0.1*lr},
     {'params':model.classifier.parameters(), 'lr':lr}
-    ], lr=1e-2,momentum=0.9)
+    ],momentum=0.9)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer,T_max=50,eta_min=1e-5)
 # scheduler = None
 
-history = train(model, optimizer, train_loader, val_loader, scheduler, device,name='test')
+# history = train(model, optimizer, train_loader, val_loader, scheduler, device,name='test')
