@@ -8,7 +8,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader,WeightedRandomSampler
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+
+import albumentations as A
 
 import math
 from tqdm import tqdm
@@ -24,16 +26,16 @@ class CustomDataset(Dataset):
         self.label_list = label_list
         self.args = args
         
-        key ,class_sample_count = torch.unique(torch.tensor(self.label_list), return_counts=True)
-        print(key)
-        print(class_sample_count)
-        # 데이터 샘플링 가중치 계산
-        weights = 1. / class_sample_count.float()
-        print(weights)
-        if self.args.crash:
-            self.weights = weights[self.label_list]
-        else:
-            self.weights = weights[self.label_list-1]
+        # key ,class_sample_count = torch.unique(torch.tensor(self.label_list), return_counts=True)
+        # print(key)
+        # print(class_sample_count)
+        # # 데이터 샘플링 가중치 계산
+        # weights = 1. / class_sample_count.float()
+        # print(weights)
+        # if self.args.crash:
+        #     self.weights = weights[self.label_list]
+        # else:
+        #     self.weights = weights[self.label_list-1]
         
     def __getitem__(self, index):
         frames = self.get_video("./data"+self.video_path_list[index][1:])
@@ -80,7 +82,7 @@ def validation(model, criterion, val_loader, device, args):
     preds, trues = [], []
     
     with torch.no_grad():
-        for videos, labels in tqdm(iter(val_loader)):
+        for videos, labels in iter(val_loader):
             videos = videos.to(device)
             labels = labels.to(device)
             
@@ -114,10 +116,8 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     for epoch in range(1, args.epoch+1):
         model.train()
         train_loss = []
-        count_c = []
         for videos, labels in tqdm(iter(train_loader)):
-            count_c += labels.squeeze(-1).detach().cpu().numpy().tolist()
-            continue
+
             videos = videos.to(device)
             labels = labels.to(device)
 
@@ -133,9 +133,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
                 scheduler.step()
                 
             train_loss.append(loss.item())
-        
-        print(Counter(count_c))
-        continue
+            
         _val_loss, _val_score = validation(model, criterion, val_loader, device,args)
         _train_loss = np.mean(train_loss)
         print(f'Epoch [{epoch}], Train Loss : [{_train_loss:.5f}] Val Loss : [{_val_loss:.5f}] Val F1 : [{_val_score:.5f}]')
@@ -149,6 +147,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }, args.save_name)
+            print(f"save model {args.save_name}")
             count = 0
         else:
             count +=1
@@ -165,11 +164,12 @@ def get_args():
     parser.add_argument("--lr", type=float,default=1e-3, help="initial lr. Default 1e-3.")
     parser.add_argument("--seed", type=int,default=42, help="select random seed. Default 42.") 
     parser.add_argument("--epoch", type=int, default=200, help="train epoch. Default 200.")
-    parser.add_argument("--kfold", type=int, default=3, help="kfold parameter. Default 5")
+    parser.add_argument("--kfold", type=int, default=5, help="kfold parameter. Default 5")
     parser.add_argument("--img", type=int, default=224, help="set input image size. Default 224")
     parser.add_argument("--batch", type=int, default=8, help="batch parameter. Default 8")
     parser.add_argument("--length" , type=int, default=50)
     parser.add_argument("--save_name", type=str, default=None, help="model name for save")
+    parser.add_argument("--txt", type=str, default=None, help="output metrix save in txt")
     return parser.parse_args()
 
 if __name__=="__main__":
@@ -179,7 +179,7 @@ if __name__=="__main__":
 
     seed_everything(args.seed) # Seed 고정
     
-    df = pd.read_csv("./data/train.csv", index_col=None)
+    df = pd.read_csv("./data/train.csv")
     # weights sampler를 사용하기위해 shuffle= False
     if args.crash:
         df['label']=np.where(df['label'] >0, 1,0)
@@ -191,25 +191,22 @@ if __name__=="__main__":
     for k,(train_index, val_index) in enumerate(skf.split(df,df['label'])):
         train_paths = df.iloc[train_index]['video_path'].values
         train_labels = df.iloc[train_index]['label'].values
-        
+   
         val_paths = df.iloc[val_index]['video_path'].values
         val_labels = df.iloc[val_index]['label'].values
-        # 0을 제외한 클래스 개수를 계산합니다.
+     
+        # 클래스별 개수를 구합니다.
         class_counts = Counter(train_labels)
-        class_keys = sorted(class_counts.keys())
 
-        # 0을 제외한 클래스 별 가중치를 계산합니다.
-        class_weights = [1.0 / class_counts[i] for i in class_keys]
-        weights = torch.DoubleTensor([class_weights[i - 1] for i in train_labels])
-        sampler = WeightedRandomSampler(weights, len(weights))
-    
+        weights = torch.DoubleTensor([1./class_counts[i] for i in train_labels])
+        weight_sampler = WeightedRandomSampler(weights,len(train_labels))
+        
         train_dataset = CustomDataset(train_paths,train_labels,args)
         # sampler = WeightedRandomSampler(train_dataset.weights, int(len(train_labels)))
-        train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=sampler)
-        
+        train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=weight_sampler)
         val_dataset = CustomDataset(val_paths,val_labels,args)
         val_loader = DataLoader(val_dataset, batch_size = args.batch, shuffle=False)
-
+        
         model_name = "x3d_xs"
         model = torch.hub.load("facebookresearch/pytorchvideo:main", model=model_name, pretrained=True)
         if args.crash:
