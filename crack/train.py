@@ -8,9 +8,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.utils.data import DataLoader, WeightedRandomSampler
+
+from utils import CustomDataset, seed_everything
 
 import albumentations as A
+from albumentations.pytorch.transforms import ToTensorV2
 
 import math
 from tqdm import tqdm
@@ -19,62 +22,7 @@ import argparse
 
 from sklearn.model_selection import StratifiedKFold
 from collections import Counter
-    
-class CustomDataset(Dataset):
-    def __init__(self, video_path_list, label_list,args):
-        self.video_path_list = video_path_list
-        self.label_list = label_list
-        self.args = args
-        
-        # key ,class_sample_count = torch.unique(torch.tensor(self.label_list), return_counts=True)
-        # print(key)
-        # print(class_sample_count)
-        # # 데이터 샘플링 가중치 계산
-        # weights = 1. / class_sample_count.float()
-        # print(weights)
-        # if self.args.crash:
-        #     self.weights = weights[self.label_list]
-        # else:
-        #     self.weights = weights[self.label_list-1]
-        
-    def __getitem__(self, index):
-        frames = self.get_video("./data"+self.video_path_list[index][1:])
-        
-        if self.label_list is not None:
-            label = self.label_list[index]
-            if self.args.crash:
-                if label!=0:
-                    label = 1
-                label = torch.FloatTensor([label])
-            else:
-                label -=1
-            
-            return frames, label
-        else:
-            return frames
-        
-    def __len__(self):
-        return len(self.video_path_list)
-    
-    def get_video(self, path):
-        frames = []
-        cap = cv2.VideoCapture(path)
-        for _ in range(args.length):
-            _, img = cap.read()
-            img = cv2.resize(img, (self.args.img, self.args.img))
-            img = img / 255.
-            frames.append(img)
-        return torch.FloatTensor(np.array(frames)).permute(3, 0, 1, 2)
 
-
-def seed_everything(seed):
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = True
     
 def validation(model, criterion, val_loader, device, args):
     model.eval()
@@ -117,7 +65,6 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
         model.train()
         train_loss = []
         for videos, labels in tqdm(iter(train_loader)):
-
             videos = videos.to(device)
             labels = labels.to(device)
 
@@ -166,7 +113,7 @@ def get_args():
     parser.add_argument("--epoch", type=int, default=200, help="train epoch. Default 200.")
     parser.add_argument("--kfold", type=int, default=5, help="kfold parameter. Default 5")
     parser.add_argument("--img", type=int, default=224, help="set input image size. Default 224")
-    parser.add_argument("--batch", type=int, default=8, help="batch parameter. Default 8")
+    parser.add_argument("--batch", type=int, default=6, help="batch parameter. Default 8")
     parser.add_argument("--length" , type=int, default=50)
     parser.add_argument("--save_name", type=str, default=None, help="model name for save")
     parser.add_argument("--txt", type=str, default=None, help="output metrix save in txt")
@@ -201,18 +148,29 @@ if __name__=="__main__":
         weights = torch.DoubleTensor([1./class_counts[i] for i in train_labels])
         weight_sampler = WeightedRandomSampler(weights,len(train_labels))
         
-        train_dataset = CustomDataset(train_paths,train_labels,args)
-        # sampler = WeightedRandomSampler(train_dataset.weights, int(len(train_labels)))
+        train_transforms = A.Compose([
+            A.Resize(height=180, width=320),
+            A.RandomBrightnessContrast(p=0.2),
+        ],additional_targets={f"image{i}":"image" for i in range(1, 50)})
+        
+        val_transforms = A.Compose([
+            A.Resize(height=180, width=320),
+        ],additional_targets={f"image{i}":"image" for i in range(1, 50)})
+        
+        train_dataset = CustomDataset(train_paths,train_labels,args,train_transforms)
         train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=weight_sampler)
-        val_dataset = CustomDataset(val_paths,val_labels,args)
+        
+        val_dataset = CustomDataset(val_paths,val_labels,args,val_transforms)
         val_loader = DataLoader(val_dataset, batch_size = args.batch, shuffle=False)
         
         model_name = "x3d_xs"
         model = torch.hub.load("facebookresearch/pytorchvideo:main", model=model_name, pretrained=True)
         if args.crash:
             model.blocks.append(nn.Linear(400,1))
+            # model.blocks.append(nn.AvgPool1d(kernel_size = 400))
             model.blocks.append(nn.Sigmoid())
         else:
+            model.blocks.append(nn.Dropout(0.3))
             model.blocks.append(nn.Linear(400,12))
             
         if args.save_name is None:
@@ -221,8 +179,8 @@ if __name__=="__main__":
             else:
                 save_name = "./checkpoint/other"
                 
-            args.save_name = save_name + f"_{k}.pt"
-        
+        args.save_name = save_name + f"_{k+1}.pt"
+
         model.eval()
         optimizer = torch.optim.Adam(params = model.parameters(), lr = args.lr,weight_decay=0.001)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,50,eta_min=args.lr*0.01)
