@@ -63,3 +63,30 @@ def seed_everything(seed):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
+    
+def collate_fn(batch):
+    indice = torch.randperm(len(batch))
+    value = round(np.random.beta(0.2,0.2),1)
+    
+    if len(batch[0])==2:
+        img = []
+        label = []
+        for a,b in batch:
+            img.append(a)
+            label.append(torch.LongTensor(b))
+        img = torch.stack(img)
+        label = torch.stack(label)
+        
+        shuffle_label = label[indice]
+        
+        label = value * label + (1 - value) * shuffle_label
+    else:
+        img = torch.stack(batch)    
+    shuffle_img = img[indice]
+    
+    img = value * img + (1 - value) * shuffle_img
+    
+    if len(batch[0])==2:
+        return img, label
+    else:
+        return img

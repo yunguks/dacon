@@ -10,10 +10,9 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
-from utils import CustomDataset, seed_everything
+from utils import CustomDataset, seed_everything, collate_fn
 
 import albumentations as A
-from albumentations.pytorch.transforms import ToTensorV2
 
 import math
 from tqdm import tqdm
@@ -22,7 +21,6 @@ import argparse
 
 from sklearn.model_selection import StratifiedKFold
 from collections import Counter
-
     
 def validation(model, criterion, val_loader, device, args):
     model.eval()
@@ -65,6 +63,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
         model.train()
         train_loss = []
         for videos, labels in tqdm(iter(train_loader)):
+            print(videos.shape, labels.shape)
             videos = videos.to(device)
             labels = labels.to(device)
 
@@ -105,7 +104,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     return best_model    
     
 def get_args():
-    parser = argparse.ArgumentParser(description="QAT training test")
+    parser = argparse.ArgumentParser(description="Crach training")
     parser.add_argument("--device", type=int, default=0,help="select device number")
     parser.add_argument("--crash", action='store_true',help="Training about whether it crashs")
     parser.add_argument("--lr", type=float,default=1e-3, help="initial lr. Default 1e-3.")
@@ -158,7 +157,7 @@ if __name__=="__main__":
         ],additional_targets={f"image{i}":"image" for i in range(1, 50)})
         
         train_dataset = CustomDataset(train_paths,train_labels,args,train_transforms)
-        train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=weight_sampler)
+        train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=weight_sampler,collate_fn=collate_fn)
         
         val_dataset = CustomDataset(val_paths,val_labels,args,val_transforms)
         val_loader = DataLoader(val_dataset, batch_size = args.batch, shuffle=False)
