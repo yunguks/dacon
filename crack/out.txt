@@ -1,1 +1,0 @@
-Namespace(device=0, crash=False, lr=0.001, seed=42, epoch=200, kfold=5, img=224, batch=6, length=50, save_name=None, txt=None)

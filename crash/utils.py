@@ -20,13 +20,23 @@ class CustomDataset(Dataset):
         if self.label_list is not None:
             label = self.label_list[index]
             if self.args.crash:
-                if label!=0:
-                    label = 1
-                label = torch.FloatTensor([label])
+                if 0 < label <7:
+                    label = [0,1,0]
+                elif label==0:
+                    label = [1,0,0]
+                else:
+                    label = [0,0,1]
+
+            elif self.args.weather:
+                a = [0,0,0]
+                a[(label-1)%6//2] = 1
+                label = a
             else:
-                label -=1
-            
-            return frames, label
+                if label%2 ==0:
+                    label = [1]
+                else:
+                    label = [0]
+            return frames, torch.as_tensor(label,dtype=torch.float32)
         else:
             return frames
         
@@ -66,17 +76,16 @@ def seed_everything(seed):
     
 def collate_fn(batch):
     indice = torch.randperm(len(batch))
-    value = round(np.random.beta(0.2,0.2),1)
+    value = np.random.beta(0.2,0.2)
     
     if len(batch[0])==2:
         img = []
         label = []
         for a,b in batch:
             img.append(a)
-            label.append(torch.LongTensor(b))
+            label.append(b)
         img = torch.stack(img)
         label = torch.stack(label)
-        
         shuffle_label = label[indice]
         
         label = value * label + (1 - value) * shuffle_label

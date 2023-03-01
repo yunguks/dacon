@@ -1,17 +1,0 @@
-nohup: 입력 무시
-/home/seunmul/.conda/envs/torch/lib/python3.9/site-packages/sklearn/model_selection/_split.py:684: UserWarning: The least populated class in y has only 3 members, which is less than n_splits=5.
-  warnings.warn(
-Using cache found in /home/seunmul/.cache/torch/hub/facebookresearch_pytorchvideo_main
-  0%|          | 0/122 [00:00<?, ?it/s]  0%|          | 0/122 [00:03<?, ?it/s]
-Traceback (most recent call last):
-  File "/home/seunmul/dacon/crack/train.py", line 186, in <module>
-    infer_model = train(model, optimizer, train_loader, val_loader, scheduler, device,args)
-  File "/home/seunmul/dacon/crack/train.py", line 72, in train
-    loss = criterion(output, labels)
-  File "/home/seunmul/.conda/envs/torch/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
-    return forward_call(*input, **kwargs)
-  File "/home/seunmul/.conda/envs/torch/lib/python3.9/site-packages/torch/nn/modules/loss.py", line 1164, in forward
-    return F.cross_entropy(input, target, weight=self.weight,
-  File "/home/seunmul/.conda/envs/torch/lib/python3.9/site-packages/torch/nn/functional.py", line 3014, in cross_entropy
-    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
-RuntimeError: "nll_loss_forward_reduce_cuda_kernel_2d_index" not implemented for 'Float'
