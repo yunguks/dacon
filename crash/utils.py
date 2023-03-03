@@ -4,8 +4,19 @@ import cv2
 import random
 import numpy as np
 import os
+import torch.nn as nn
 
 class CustomDataset(Dataset):
+    """_summary_
+    Args:
+        Dataset (_type_): _description_
+        
+    init:
+        video_path_list (list)): _description_
+        label_list (list), optional): _description_. Defaults to None.
+        args (argparser, optional): _description_. Defaults to None.
+        transform (A.compose, optional): _description_. Defaults to None.    
+    """
     def __init__(self, video_path_list, label_list=None,args=None,transform=None):
         self.video_path_list = video_path_list
         self.label_list = label_list
@@ -19,23 +30,13 @@ class CustomDataset(Dataset):
         frames = torch.FloatTensor(np.array(frames)).permute(3, 0, 1, 2)
         if self.label_list is not None:
             label = self.label_list[index]
-            if self.args.crash:
-                if 0 < label <7:
-                    label = [0,1,0]
-                elif label==0:
-                    label = [1,0,0]
-                else:
-                    label = [0,0,1]
-
-            elif self.args.weather:
-                a = [0,0,0]
-                a[(label-1)%6//2] = 1
-                label = a
+            if self.args.model == 'time':
+                label = [label]
             else:
-                if label%2 ==0:
-                    label = [1]
-                else:
-                    label = [0]
+                a = [0,0,0]
+                a[label]=1
+                label = a
+
             return frames, torch.as_tensor(label,dtype=torch.float32)
         else:
             return frames
@@ -58,7 +59,7 @@ class CustomDataset(Dataset):
     
     def aug(self,transforms, images):
         res = transforms(**images)
-        images = np.zeros((len(images),180, 320,3), dtype=np.uint8)
+        images = np.zeros((len(images),self.args.img_size[0], self.args.img_size[1],3), dtype=np.uint8)
         images[0, :, :, :] = res["image"]
         for i in range(1, len(images)):
             images[i, :, :, :] = res[f"image{i}"]
@@ -75,6 +76,13 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = True
     
 def collate_fn(batch):
+    """_summary_
+    Args:
+        batch (tensor): input
+
+    Returns:
+        _type_: mixup input
+    """
     indice = torch.randperm(len(batch))
     value = np.random.beta(0.2,0.2)
     
@@ -99,3 +107,23 @@ def collate_fn(batch):
         return img, label
     else:
         return img
+    
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=1, gamma=2, logits=False, reduce=True):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.logits = logits
+        self.reduce = reduce
+
+    def forward(self, inputs, targets):
+    
+        ce_loss = nn.BCEWithLogitsLoss(reduction='none')(inputs, targets)
+
+        pt = torch.exp(-ce_loss)
+        F_loss = self.alpha * (1-pt)**self.gamma * ce_loss
+
+        if self.reduce:
+            return torch.mean(F_loss)
+        else:
+            return F_loss

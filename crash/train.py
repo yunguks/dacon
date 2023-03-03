@@ -10,7 +10,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
-from utils import CustomDataset, seed_everything, collate_fn
+from utils import CustomDataset, seed_everything, collate_fn, FocalLoss
 
 import albumentations as A
 
@@ -38,7 +38,7 @@ def validation(model, criterion, val_loader, device, args):
             
             val_loss.append(loss.item())
             
-            if args.crash:
+            if args.model == 'time':
                 preds += (logit > 0.5).squeeze(-1).detach().cpu().numpy().tolist()
                 trues += labels.detach().cpu().numpy().tolist()
             else:
@@ -52,7 +52,10 @@ def validation(model, criterion, val_loader, device, args):
 
 def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     model.to(device)
-    criterion = nn.BCEWithLogitsLoss().to(device)
+    if args.focal:
+        criterion = FocalLoss().to(device)
+    else:    
+        criterion = nn.BCEWithLogitsLoss().to(device)
     
     best_val_loss = math.inf
     best_model = None
@@ -60,7 +63,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     for epoch in range(1, args.epoch+1):
         model.train()
         train_loss = []
-        for videos, labels in tqdm(iter(train_loader)):
+        for videos, labels in tqdm(iter(train_loader),leave=False):
             videos = videos.to(device)
             labels = labels.to(device)
 
@@ -79,6 +82,15 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
         _val_loss, _val_score = validation(model, criterion, val_loader, device,args)
         _train_loss = np.mean(train_loss)
         print(f'Epoch [{epoch}], Train Loss : [{_train_loss:.5f}] Val Loss : [{_val_loss:.5f}] Val F1 : [{_val_score:.5f}]')
+        
+        data = pd.DataFrame({"epoch":[epoch+1],
+                             "train_loss":[np.round(_train_loss,4)],
+                             "val_loss":[np.round(_val_loss,4)],
+                             "f1_score":[np.round(_val_score,4)],
+                             "img_size":args.img_size,
+                             
+        })
+        data.to_csv(args.csv, mode='a',header=False,index=False)
         
         if best_val_loss >= _val_loss:
             best_val_loss = _val_loss
@@ -101,40 +113,51 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     
 def get_args():
     parser = argparse.ArgumentParser(description="Crach training")
-    parser.add_argument("--device", type=int, default=0,help="select device number")
+    parser.add_argument("--device", type=int,default=None,help="select device number")
     # model
-    parser.add_argument("--crash", action='store_true',help="Training about whether it crashs")
-    parser.add_argument("--weather", action="store_true", help="Using label to binary list")
+    parser.add_argument("--model", choices=['crash','weather','time'],help="classification type")
     parser.add_argument("--small", action="store_true", help="using x3d_xs model. default is x3d_l")
+    parser.add_argument("--sampler", type=bool, default=True, help="Using Weighted Sampler. Default is True")
     
     # train
     parser.add_argument("--lr", type=float,default=1e-3, help="initial lr. Default 1e-3.")
     parser.add_argument("--seed", type=int,default=42, help="select random seed. Default 42.") 
     parser.add_argument("--epoch", type=int, default=200, help="train epoch. Default 200.")
     parser.add_argument("--kfold", type=int, default=5, help="kfold parameter. Default 5")
-    parser.add_argument("--img", type=int, default=224, help="set input image size. Default 224")
+    parser.add_argument("--img-size", nargs="+",type=int, default=[180,320], help="set input image size. Default 224")
     parser.add_argument("--batch", type=int, default=6, help="batch parameter. Default 8")
     parser.add_argument("--length" , type=int, default=50)
+    parser.add_argument("--focal" ,action="store_true", help="Using Focal Loss")
     
     # utils
     parser.add_argument("--save_name", type=str, default=None, help="model name for save")
-    parser.add_argument("--txt", type=str, default=None, help="output metrix save in txt")
+    parser.add_argument("--csv", type=str, default=None, help="output metrix save in csv")
     return parser.parse_args()
 
 if __name__=="__main__":
     os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
     args = get_args()
     print(args)
-    device = torch.device(f'cuda:{args.device}') if torch.cuda.is_available() else torch.device('cpu')
-
+    if args.device is not None:
+        device = torch.device(f'cuda:{args.device}') if torch.cuda.is_available() else torch.device('cpu')
+    else:
+        device=torch.device("cuda")
     seed_everything(args.seed) # Seed 고정
     
     df = pd.read_csv("./data/train.csv")
     # weights sampler를 사용하기위해 shuffle= False
-    if args.crash is False:
+    if args.model != 'crash':
         df = df[df['label']>0]
         df.reset_index(drop=True,inplace=True)
 
+        if args.model == 'weather':
+            df['label'] = ((df['label']-1)%6)//2
+        else:
+            df['label']=np.where(df['label']%2==0 , 1,0)
+    else:
+        df['label'] = df['label'].replace([1,2,3,4,5,6],[1,1,1,1,1,1])
+        df['label'] = df['label'].replace([7,8,9,10,11,12],[2,2,2,2,2,2])
+        
     skf = StratifiedKFold(n_splits=args.kfold,shuffle=False)
     for k,(train_index, val_index) in enumerate(skf.split(df,df['label'])):
         train_paths = df.iloc[train_index]['video_path'].values
@@ -145,17 +168,21 @@ if __name__=="__main__":
      
         # 클래스별 개수를 구하여 sampling
         class_counts = Counter(train_labels)
-        weights = torch.DoubleTensor([1./class_counts[i] for i in train_labels])
-        weight_sampler = WeightedRandomSampler(weights,len(train_labels))
+        print(class_counts)
+        if args.sampler:
+            weights = torch.DoubleTensor([1./class_counts[i] for i in train_labels])
+            weight_sampler = WeightedRandomSampler(weights,len(train_labels))
+        else:
+            weight_sampler = None
         
         train_transforms = A.Compose([
-            A.Resize(height=180, width=320),
+            A.Resize(height=args.img_size[0], width=args.img_size[1]),
             A.RandomBrightnessContrast(p=0.2),
             A.Normalize(max_pixel_value=255.0)
         ],additional_targets={f"image{i}":"image" for i in range(1, 50)})
         
         val_transforms = A.Compose([
-            A.Resize(height=180, width=320),
+            A.Resize(height=args.img_size[0], width=args.img_size[1]),
             A.Normalize(max_pixel_value=255.0)
         ],additional_targets={f"image{i}":"image" for i in range(1, 50)})
         
@@ -164,29 +191,27 @@ if __name__=="__main__":
         train_loader = DataLoader(train_dataset, batch_size = args.batch,sampler=weight_sampler,collate_fn=collate_fn)
         
         val_dataset = CustomDataset(val_paths,val_labels,args,val_transforms)
-        val_loader = DataLoader(val_dataset, batch_size = args.batch, shuffle=False)
+        val_loader = DataLoader(val_dataset, batch_size = args.batch*2, shuffle=False)
         
         if args.small:
-            model_name = "x3d_s"
+            model_name = "x3d_xs"
+            model = torch.hub.load("facebookresearch/pytorchvideo:main", model=model_name, pretrained=True)
         else:
             model_name = "x3d_s"
-        model = torch.hub.load("facebookresearch/pytorchvideo:main", model=model_name, pretrained=True)
-        if args.crash or args.weather:
+            model = torch.hub.load("facebookresearch/pytorchvideo:main", model=model_name, pretrained=True)
+        
+        if args.model == 'time':
+            model.blocks.append(nn.Linear(400,1))
+        else:
             model.blocks.append(nn.Dropout(0.3))
             model.blocks.append(nn.Linear(400,3))
-        else:
-            model.blocks.append(nn.Linear(400,1))
             
         if args.save_name is None:
-            if args.crash:
-                save_name = "./checkpoint/crash"
-            elif args.weather:
-                save_name = "./checkpoint/weather"
-            else:
-                save_name = "./checkpoint/time"
-                
+            save_name = f"./checkpoint/{args.model}"
         args.save_name = save_name + f"_{k+1}.pt"
 
+        args.csv = args.save_name.replace(".pt",".csv")
+        
         model.eval()
         optimizer = torch.optim.Adam(params = model.parameters(), lr = args.lr,weight_decay=0.001)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,50,eta_min=args.lr*0.01)
