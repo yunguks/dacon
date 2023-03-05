@@ -10,7 +10,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
-from utils import CustomDataset, seed_everything, collate_fn, FocalLoss
+from utils import CustomDataset, seed_everything, collate_fn, FocalLoss, CosineAnnealingWarmupRestarts
 
 import albumentations as A
 
@@ -21,7 +21,8 @@ import argparse
 
 from sklearn.model_selection import StratifiedKFold
 from collections import Counter
-    
+from sklearn.metrics import confusion_matrix
+
 def validation(model, criterion, val_loader, device, args):
     model.eval()
     val_loss = []
@@ -48,7 +49,7 @@ def validation(model, criterion, val_loader, device, args):
         _val_loss = np.mean(val_loss)
     
     _val_score = f1_score(trues, preds, average='macro')
-    return _val_loss, _val_score
+    return _val_loss, _val_score, confusion_matrix(trues, preds)
 
 def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     model.to(device)
@@ -74,22 +75,28 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
             loss.backward()
             optimizer.step()
             
+            train_loss.append(loss.item())
+            if args.warmup==False:
+                if scheduler is not None:
+                    scheduler.step()
+        
+        if args.warmup==True:
             if scheduler is not None:
                 scheduler.step()
-                
-            train_loss.append(loss.item())
             
-        _val_loss, _val_score = validation(model, criterion, val_loader, device,args)
+        _val_loss, _val_score,_confusion_matrix = validation(model, criterion, val_loader, device,args)
         _train_loss = np.mean(train_loss)
         print(f'Epoch [{epoch}], Train Loss : [{_train_loss:.5f}] Val Loss : [{_val_loss:.5f}] Val F1 : [{_val_score:.5f}]')
+        print(f'confusion_maxtrix : {_confusion_matrix}')
         
         data = pd.DataFrame({"epoch":[epoch+1],
                              "train_loss":[np.round(_train_loss,4)],
                              "val_loss":[np.round(_val_loss,4)],
                              "f1_score":[np.round(_val_score,4)],
-                             "img_size":args.img_size,
-                             
+                             "img_h":args.img_size[0],
+                             "img_w":args.img_size[1],
         })
+        
         data.to_csv(args.csv, mode='a',header=False,index=False)
         
         if best_val_loss >= _val_loss:
@@ -116,18 +123,19 @@ def get_args():
     parser.add_argument("--device", type=int,default=None,help="select device number")
     # model
     parser.add_argument("--model", choices=['crash','weather','time'],help="classification type")
-    parser.add_argument("--small", action="store_true", help="using x3d_xs model. default is x3d_l")
-    parser.add_argument("--sampler", type=bool, default=True, help="Using Weighted Sampler. Default is True")
+    parser.add_argument("--small", action="store_true", help="using x3d_xs model. default is x3d_s")
+    parser.add_argument("--sampler", action="store_true", help="Using Weighted Sampler. Default is False")
     
     # train
-    parser.add_argument("--lr", type=float,default=1e-3, help="initial lr. Default 1e-3.")
+    parser.add_argument("--focal" ,action="store_true", help="Using Focal Loss")
+    parser.add_argument("--warmup", action="store_true", help="Using CosineAnnealingWarmupRestarts")
+    parser.add_argument("--lr", type=float,default=1e-4, help="initial lr. Default 1e-4.")
     parser.add_argument("--seed", type=int,default=42, help="select random seed. Default 42.") 
     parser.add_argument("--epoch", type=int, default=200, help="train epoch. Default 200.")
     parser.add_argument("--kfold", type=int, default=5, help="kfold parameter. Default 5")
-    parser.add_argument("--img-size", nargs="+",type=int, default=[180,320], help="set input image size. Default 224")
-    parser.add_argument("--batch", type=int, default=6, help="batch parameter. Default 8")
+    parser.add_argument("--img-size", nargs="+",type=int, default=[180,320], help="set input image size. Default 180+320")
+    parser.add_argument("--batch", type=int, default=6, help="batch parameter. Default 6")
     parser.add_argument("--length" , type=int, default=50)
-    parser.add_argument("--focal" ,action="store_true", help="Using Focal Loss")
     
     # utils
     parser.add_argument("--save_name", type=str, default=None, help="model name for save")
@@ -214,6 +222,9 @@ if __name__=="__main__":
         
         model.eval()
         optimizer = torch.optim.Adam(params = model.parameters(), lr = args.lr,weight_decay=0.001)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,50,eta_min=args.lr*0.01)
+        if args.warmup:
+            scheduler = CosineAnnealingWarmupRestarts(optimizer, first_cycle_steps=30,max_lr = args.lr, warmup_steps = 8,gamma=0.5)
+        else:
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,50,eta_min=args.lr*0.01)
         
         infer_model = train(model, optimizer, train_loader, val_loader, scheduler, device,args)
