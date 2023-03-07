@@ -58,7 +58,7 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
     else:    
         criterion = nn.BCEWithLogitsLoss().to(device)
     
-    best_val_loss = math.inf
+    best_score = 0
     best_model = None
     count = 0
     for epoch in range(1, args.epoch+1):
@@ -99,8 +99,8 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device,args):
         
         data.to_csv(args.csv, mode='a',header=False,index=False)
         
-        if best_val_loss >= _val_loss:
-            best_val_loss = _val_loss
+        if best_score <= _val_score:
+            best_score = _val_score
             best_model = model
             torch.save({
                 'epoch': epoch,

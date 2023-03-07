@@ -8,6 +8,14 @@ import torch.nn as nn
 import math
 from torch.optim.lr_scheduler import _LRScheduler
 
+def memory_check():
+    """_summary_
+        Allocated GPU 
+    """
+    print(f"  Allocated: {round(torch.cuda.memory_allocated()/1024**3,2)} GB")
+    print(f"  Cached:    {round(torch.cuda.memory_reserved()/1024**3,2)} GB\n")
+
+
 class CustomDataset(Dataset):
     """_summary_
     Args:
