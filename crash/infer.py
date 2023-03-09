@@ -18,7 +18,7 @@ def get_args():
     parser.add_argument("--device", type=int, default=0,help="select device number")
     parser.add_argument("--length" , type=int, default=50)
     parser.add_argument("--txt", type=str, default=None, help="output metrix save in txt")
-    parser.add_argument("--batch", type=int, default=16, help="batch parameter")
+    parser.add_argument("--batch", type=int, default=1, help="batch parameter")
     parser.add_argument("--img-size", nargs="+",type=int, default=[180,320], help="set input image size. Default 180+320")
     
     return parser.parse_args()
